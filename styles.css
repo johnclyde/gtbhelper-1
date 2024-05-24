@@ -22,9 +22,10 @@ body {
 
 header {
   padding: 2vw;
-  background: linear-gradient(#ff61ff, #c2dcff);
+  background-color: #c2dcff;
   color: #181818;
   box-shadow: 0 0 8px #8c8c8c;
+  border: 3px solid darkcyan;
 }
 
 h1 {
@@ -172,6 +173,7 @@ button {
   left: 0;
   right: 0;
   display: flex;
+  border-bottom: 1px solid #0000008a;
 }
 
 #tableLiner {
@@ -474,13 +476,18 @@ td .redips-drag,
 }
 
 footer {
-  padding: 2vw;
-  background-color: #c2dcff;
+  padding: 10px;
+  background-color: #cbd3de;
   color: #181818;
+  margin-top: 30px;
+  margin-left: 25%;
+  margin-right: 25%;
+  width: auto;
   text-align: center;
-  font-size: 11pt;
-  line-height: 25px;
+  border: 2px solid #8080a4;
   box-shadow: 0 0 8px #8c8c8c;
+  font-size: 11pt;
+  line-height: 16pt;
 }
 
 #darkMode {
@@ -504,8 +511,12 @@ footer {
   border-color: #004747;
 }
 
+.darkm header h1 {
+  background: #999;
+}
+
 .darkm header a {
-  color: blue;
+  color: black;
 }
 
 .darkm #tableContainer {
@@ -601,24 +612,6 @@ footer {
   color: white;
 }
 
-.darkm .makushitaTable th {
-  background: darkblue;
-  color: #e2e2e2;
-}
-
-.darkm .makushitaTable td {
-  background: #282852;
-}
-
-.darkm .makushitaTable a {
-  color: #b8b8ff;
-}
-
-.darkm .intai a {
-  color: #d8d8d8;
-  text-shadow: none;
-}
-
 #draftsTable {
   color: black;
   margin-top: 5px;
@@ -669,14 +662,14 @@ footer {
 .makushitaTable {
   border-collapse: collapse;
   text-align: left;
-  width: 100%;
+  display: inline-table;
+  margin-top: 10px;
 }
 
 .makushitaTable td {
   font-size: 12px;
   border: none;
   padding: 0 5px;
-  white-space: nowrap;
 }
 
 .makushitaTable th {
@@ -685,15 +678,4 @@ footer {
   background: #dcdcdc;
   border: solid dimgray;
   border-width: 0 1px 1px 0;
-}
-
-.initCell {
-  box-shadow: 2px 2px inset #0000001f;
-}
-
-.msTableContainer {
-  columns: 3;
-  width: min-content;
-  margin-top: 10px;
-  column-gap: 5px;
 }
