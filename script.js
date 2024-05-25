@@ -4,7 +4,7 @@
 var shikonaCells = document.getElementsByClassName("shikona");
 var theRikishi = [], rikishiID = [];
 for (var i = 0; i < 100; i++) {
-  theRikishi[i] = shikonaCells[i].previousSibling.innerHTML + ' ' + shikonaCells[i].children[0].innerHTML + ' ' + shikonaCells[i].nextSibling.children[0].innerHTML;
+  theRikishi[i] = shikonaCells[i].previousElementSibling.innerHTML + ' ' + shikonaCells[i].children[0].innerHTML + ' ' + shikonaCells[i].nextElementSibling.children[0].innerHTML;
   rikishiID[i]  = shikonaCells[i].children[0].href.split('=')[1];
 } 
 /* To make this, enable "One Column" option in SumoDB, copy & paste the tables 
@@ -468,7 +468,7 @@ function addMakushitaTable() {
 }
 
 function loadDraft() {
-  var draftDate = event.target.parentNode.previousSibling.innerText;
+  var draftDate = event.target.parentNode.previousElementSibling.innerText;
 
   if (confirm("Load draft from " + draftDate + "?")) {
     var draftsTable = document.getElementById("draftsTable");
@@ -515,7 +515,7 @@ function loadDraft() {
 }
 
 function deleteDraft() {
-  var draftDate = event.target.parentNode.previousSibling.innerText;
+  var draftDate = event.target.parentNode.previousElementSibling.innerText;
 
   if (confirm("Delete draft from " + draftDate + "?")) {
     var allDrafts = JSON.parse(window.localStorage.getItem("drafts"));
@@ -909,22 +909,22 @@ function updateInfoCells() {
       b1Cell[i].children.length > 0 &&
       b1Cell[i].children[0].tagName == "DIV"
     ) {
-      newRankCell = b1Cell[i].nextSibling;
+      newRankCell = b1Cell[i].nextElementSibling;
       if (i % 2 != 0) {
-        newRankCell = newRankCell.nextSibling;
+        newRankCell = newRankCell.nextElementSibling;
       }
       if (newRankCell.innerHTML != "") {
         newRankCell.innerHTML = "";
-        b1Chg = newRankCell.nextSibling;
+        b1Chg = newRankCell.nextElementSibling;
         b1Chg.innerHTML = "";
       }
     }
   }
 
   for (var i = 0; i < b2Cell.length; i++) {
-    resultCell = b2Cell[i].nextSibling;
-    currRankCell = b2Cell[i].previousSibling;
-    targetChgCell = resultCell.nextSibling;
+    resultCell = b2Cell[i].nextElementSibling;
+    currRankCell = b2Cell[i].previousElementSibling;
+    targetChgCell = resultCell.nextElementSibling;
 
     if (b2Cell[i].children.length > 0) {
       for (var j = 0; j < b2Cell[i].children.length; j++) {
@@ -935,11 +935,11 @@ function updateInfoCells() {
           chg;
 
         originCell = document.querySelectorAll("." + thisRank)[0];
-        newRankCell = originCell.nextSibling;
+        newRankCell = originCell.nextElementSibling;
         if (thisRank.endsWith("w")) {
-          newRankCell = newRankCell.nextSibling;
-          resultLink = originCell.nextSibling.innerHTML;
-        } else resultLink = originCell.previousSibling.innerHTML;
+          newRankCell = newRankCell.nextElementSibling;
+          resultLink = originCell.nextElementSibling.innerHTML;
+        } else resultLink = originCell.previousElementSibling.innerHTML;
 
         targetCellRank = b2Cell[i].dataset.r;
 
@@ -972,7 +972,7 @@ function updateInfoCells() {
 
         newRankCell.innerHTML = b2Cell[i].dataset.r;
 
-        b1Chg = newRankCell.nextSibling;
+        b1Chg = newRankCell.nextElementSibling;
         b1Chg.innerHTML = thisChg;
 
         if (j == 0) {
@@ -1574,8 +1574,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
           var resCell, newRankCell;
 
-          if (i % 2 == 0) resCell = cell[i].previousSibling;
-          else resCell = cell[i].nextSibling;
+          if (i % 2 == 0) resCell = cell[i].previousElementSibling;
+          else resCell = cell[i].nextElementSibling;
 
           resCell.innerHTML = rikiData[2];
 
@@ -1640,7 +1640,6 @@ function createDividerRow(title) {
         row.innerHTML = `<th colspan="9" class="tableTitle">${title}</th>`;
     } else {
         row.classList.add('divider');
-        row.innerHTML = '<td colspan="9"></td>';
     }
     return row;
 }
