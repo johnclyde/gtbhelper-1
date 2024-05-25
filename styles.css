@@ -354,19 +354,19 @@ textarea {
   background-color: #f2f2b8;
 }
 
-.ygroup > * {
+.yRow > * {
   background-color: #f8e5c2;
 }
 
-.ogroup > * {
+.oRow > * {
   background-color: #f4f4bf;
 }
 
-.sgroup > * {
+.sRow > * {
   background-color: #f8e5c2;
 }
 
-.kgroup > * {
+.kRow > * {
   background-color: #f4f4bf;
 }
 
@@ -593,13 +593,13 @@ footer {
   background-color: #969696;
 }
 
-.darkm .ygroup td,
-.darkm .sgroup td {
+.darkm .yRow td,
+.darkm .sRow td {
   background-color: #52522e;
 }
 
-.darkm .ogroup td,
-.darkm .kgroup td {
+.darkm .oRow td,
+.darkm .kRow td {
   background-color: #504531;
 }
 
