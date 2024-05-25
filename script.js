@@ -1614,6 +1614,8 @@ function createRowBanzuke1(rank) {
         <td class="rs1"></td>
         <td class="new hid"></td>
         <td class="ch1 hid"></td>`;
+    if (['Y', 'O', 'S', 'K'].includes(rank.charAt(0))) 
+      row.className = rank.charAt(0).toLowerCase() + "Row";
     return row;
 }
 
@@ -1631,6 +1633,8 @@ function createRowBanzuke2(rank) {
         <td class="rs2"></td>
         <td class="ch2"></td>
         <td class="nte hid"><div></div></td>`;
+    if (['Y', 'O', 'S', 'K'].includes(rank.charAt(0))) 
+      row.className = rank.charAt(0).toLowerCase() + "Row";
     return row;
 }
 
