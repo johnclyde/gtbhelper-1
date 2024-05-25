@@ -319,8 +319,8 @@ var sekitoriID = [
 
 //***** Just update the "basho" variable and you're all done. *****
 
-export let redips = {};
-let rd = REDIPS.drag;
+let redips = {},
+  rd = REDIPS.drag;
 
 function exportTableToCSV($table, filename) {
   var $rows = $table.find("tr:has(td),tr:has(th)"),
@@ -405,9 +405,19 @@ function exportTableToCSV($table, filename) {
   }
 }
 
-window.onload = function () {
-  
-};
+for (let button of document.getElementsByName("onDoubleClick")) {
+  button.addEventListener("click", () => {
+    window.localStorage.setItem("radioButton", button.value);
+  })
+}
+
+for (let button of document.getElementsByName("dropMode")) {
+  button.addEventListener("click", () => {
+    if (button.value == "disable") rd.dropMode = "single";
+    else rd.dropMode = "multiple";
+    window.localStorage.setItem("radioDrop", button.value);
+  })
+}
 
 function addMakushitaTable() {
   var container = document.querySelectorAll(".banzukeContainer")[1];
@@ -528,11 +538,11 @@ function deleteDraft() {
   }
 }
 
-export function saveRadio(radioButton) {
+function saveRadio(radioButton) {
   window.localStorage.setItem("radioButton", radioButton.value);
 }
 
-export function saveDropRadio(button) {
+function saveDropRadio(button) {
   if (button.value == "disable") rd.dropMode = "single";
   else rd.dropMode = "multiple";
 
@@ -861,34 +871,36 @@ redips.init = function () {
   };
 };
 
-export function toggleColumns(button) {
-  var column = button.value;
-  var colCell = document.getElementsByClassName(column);
-  var colCheck = document.querySelectorAll(".columnCheckbox");
-  var tableTitle = document.querySelectorAll(".tableTitle");
+for (let button of document.getElementsByClassName("columnCheckbox")) {
+  button.addEventListener("click", () => {
+    var column = button.value;
+    var colCell = document.getElementsByClassName(column);
+    var colCheck = document.querySelectorAll(".columnCheckbox");
+    var tableTitle = document.querySelectorAll(".tableTitle");
 
-  if (button.checked) {
-    if (button.classList.contains("forB1")) tableTitle[0].colSpan += 2;
-    else {
-      tableTitle[1].colSpan += 2;
-      tableTitle[2].colSpan += 2;
+    if (button.checked) {
+      if (button.classList.contains("forB1")) tableTitle[0].colSpan += 2;
+      else {
+        tableTitle[1].colSpan += 2;
+        tableTitle[2].colSpan += 2;
+      }
+      for (var i = 0; i < colCell.length; i++) colCell[i].classList.remove("hid");
+    } else {
+      if (button.classList.contains("forB1")) tableTitle[0].colSpan -= 2;
+      else {
+        tableTitle[1].colSpan -= 2;
+        tableTitle[2].colSpan -= 2;
+      }
+      for (var i = 0; i < colCell.length; i++) colCell[i].classList.add("hid");
     }
-    for (var i = 0; i < colCell.length; i++) colCell[i].classList.remove("hid");
-  } else {
-    if (button.classList.contains("forB1")) tableTitle[0].colSpan -= 2;
-    else {
-      tableTitle[1].colSpan -= 2;
-      tableTitle[2].colSpan -= 2;
+    for (var i = 1; i < 8; i++) {
+      window.localStorage.setItem(
+        "colCheck" + String(i),
+        colCheck[i - 1].checked,
+      );
     }
-    for (var i = 0; i < colCell.length; i++) colCell[i].classList.add("hid");
-  }
-  for (var i = 1; i < 8; i++) {
-    window.localStorage.setItem(
-      "colCheck" + String(i),
-      colCheck[i - 1].checked,
-    );
-  }
-  saveBanzuke();
+    saveBanzuke();
+  });
 }
 
 function updateInfoCells() {
@@ -1062,42 +1074,26 @@ redips.resetBanzuke = function () {
 
 redips.arrange = function () {
   if (confirm("Confirm auto-arrange?") == true) {
-    var rikishi = document.querySelectorAll(".se"),
-      msCounter = document.getElementById("msRik"),
+    var msCounter = document.getElementById("msRik"),
       juCounter = document.getElementById("juRik"),
       makuCounter = document.getElementById("makRik");
 
-    for (var i = 0; i < rikishi.length; i++) {
-      var rikishiRank = rikishi[i].id;
+    for (var i = 0; i < theSekitori.length; i++) {
+      var rikishi = document.getElementById(theSekitori[i].split(' ')[0]);
+      var rikishiRank = theSekitori[i].split(' ')[0];
 
-      if (
-        (rikishiRank.startsWith("Ms") && rikishiRank.slice(2, -1) > 15) ||
-        rikishiRank.startsWith("Sd")
-      ) {
-        /*
-        if (rikishi[i].parentNode.classList.contains("b2")) {
-          rd.moveObject({
-            obj: rikishi[i], 
-            target: document.querySelector('.' + rikishiRank), 
-            callback: function () {
-              document.querySelector('.' + rikishiRank).children[0].remove();
-            }
-          });
-        }
-        */
-        continue;
-      }
-      if (!rikishi[i].parentNode.classList.contains("b2")) {
+      if (rikishiRank.startsWith("Ms") && rikishiRank.slice(2, -1) > 15) break;
+      if (!rikishi.parentNode.classList.contains("b2")) {
         var holder = document.createElement("a");
 
-        holder.innerHTML = rikishi[i].innerText;
-        holder.href = rikishi[i].children[0].href;
+        holder.innerHTML = rikishi.innerText;
+        holder.href = rikishi.children[0].href;
         holder.target = "_blank";
-        rikishi[i].parentNode.appendChild(holder);
+        rikishi.parentNode.appendChild(holder);
       } else {
-        if (rikishi[i].parentNode.dataset.r.startsWith("J"))
+        if (rikishi.parentNode.dataset.r.startsWith("J"))
           juCounter.innerHTML--;
-        else if (rikishi[i].parentNode.dataset.r.startsWith("Ms"))
+        else if (rikishi.parentNode.dataset.r.startsWith("Ms"))
           msCounter.innerHTML--;
         else makuCounter.innerHTML--;
       }
@@ -1105,7 +1101,7 @@ redips.arrange = function () {
       else if (rikishiRank.startsWith("Ms")) msCounter.innerHTML++;
       else makuCounter.innerHTML++;
       rd.moveObject({
-        obj: rikishi[i],
+        obj: rikishi,
         target: document.querySelector('[data-r="' + rikishiRank + '"]'),
       });
     }
@@ -1395,8 +1391,10 @@ document.addEventListener('DOMContentLoaded', function() {
         draftsJSON[i].name +
         "</b></td><td>" +
         draftsJSON[i].date +
-        '</td><td><button onclick="deleteDraft()">❌</button> <button onclick="loadDraft()">Load</button></td>';
+        '</td><td><button>❌</button> <button>Load</button></td>';
       draftsTable.children[0].appendChild(draftRow);
+      draftsTable.children[0].lastChild.children[2].children[0].addEventListener("click", deleteDraft);
+      draftsTable.children[0].lastChild.children[2].children[1].addEventListener("click", loadDraft);
     }
   }
   if (window.localStorage.getItem("colCheck1") === null) {
@@ -1451,8 +1449,10 @@ document.addEventListener('DOMContentLoaded', function() {
           draftName +
           "</b></td><td>" +
           currentDate +
-          '</td><td><button onclick="deleteDraft()">❌</button> <button onclick="loadDraft()">Load</button></td>';
-        draftsTable.children[0].prepend(draftRow);
+          '</td><td><button>❌</button> <button>Load</button></td>';
+        draftsTable.children[0].appendChild(draftRow);
+        draftsTable.children[0].lastChild.children[2].children[0].addEventListener("click", deleteDraft);
+        draftsTable.children[0].lastChild.children[2].children[1].addEventListener("click", loadDraft);
         document.getElementById("draftName").value = "";
       }
       saveDialog.close();
@@ -1471,6 +1471,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("saveDraftButton").click();
       }
     });
+
+  document.getElementById("resetBanzuke").addEventListener("click", redips.resetBanzuke);
+  document.getElementById("autoArrange").addEventListener("click", redips.arrange);
 
   function darkmode() {
     document.body.classList.add("darkm"); //add a class to the body tag
