@@ -406,302 +406,7 @@ function exportTableToCSV($table, filename) {
 }
 
 window.onload = function () {
-  var basho = "202403"; // The date of the basho just ended
-
-  // This must be a hyperlink
-  $("#exportToCsv1").on("click", function (event) {
-    exportTableToCSV.apply(this, [$("#banzuke1"), "banzuke1.csv"]);
-  });
-  $("#exportToCsv2").on("click", function (event) {
-    exportTableToCSV.apply(this, [$("#banzuke2"), "banzuke2.csv"]);
-  });
-
-  // removing unused local storage names of before *****************************
-  if (window.localStorage.getItem("banzuke1") !== null) {
-    window.localStorage.removeItem("banzuke1");
-    window.localStorage.removeItem("banzuke2");
-  }
-  if (window.localStorage.getItem("banzuke") !== null) {
-    window.localStorage.removeItem("banzuke");
-  }
-  if (window.localStorage.getItem("picks") !== null) {
-    window.localStorage.removeItem("picks");
-  }
-  // ***************************************************************************
-  if (window.localStorage.getItem("savedBanzuke") !== null) {
-    var saveDate = Date.parse(window.localStorage.getItem("savedBanzukeTime")),
-      expireDate = new Date(Date.UTC(2024, 2, 24, 9, 10)); //UTC time
-
-    if (saveDate < expireDate) window.localStorage.removeItem("savedBanzuke");
-    else {
-      document.getElementById("tableLiner").innerHTML =
-        window.localStorage.getItem("savedBanzuke");
-      if (document.querySelectorAll(".makushitaTable").length == 0) {
-        addMakushitaTable();
-        updateInfoCells();
-      }
-    }
-  }
-  if (window.localStorage.getItem("savedBanzuke") === null) {
-    writeTableTitles(basho);
-    addRikishi();
-    addMakushitaTable();
-  }
-
-  var radioButton = document.getElementsByClassName("checkbox"),
-    radioLocal = window.localStorage.getItem("radioButton"),
-    radioLocalDrop = window.localStorage.getItem("radioDrop");
-
-  if (radioLocal === null || radioLocal == "openRikishiPage")
-    radioButton[0].checked = true;
-  else if (radioLocal == "returnToOld") radioButton[1].checked = true;
-  else radioButton[2].checked = true;
-
-  if (radioLocalDrop === null || radioLocalDrop == "multiple")
-    radioButton[3].checked = true;
-  else if (radioLocalDrop == "shift") radioButton[4].checked = true;
-  else radioButton[5].checked = true;
-
-  var noteCells = document.querySelectorAll(".nte");
-
-  for (var i = 2; i < noteCells.length; i++) {
-    let time = 0;
-    noteCells[i].children[0].contentEditable = "true";
-    noteCells[i].children[0].addEventListener("input", function () {
-      // Reset the timer
-      clearTimeout(time);
-
-      time = setTimeout(function () {
-        saveBanzuke();
-        showSaving();
-      }, 1000);
-    });
-  }
-
-  var checkbox = document.getElementById("ChangeTheme"); //get the checkbox to a variable
-
-  //check storage if dark mode was on or off
-  if (localStorage.getItem("mode") == "dark") {
-    darkmode(); //if dark mode was on, run this funtion
-  } else {
-    nodark(); //else run this funtion
-  }
-
-  checkbox.addEventListener("change", function () {
-    //check if the checkbox is checked or not
-    if (checkbox.checked) {
-      darkmode(); //if the checkbox is checked, run this funtion
-    } else {
-      nodark(); //else run this funtion
-    }
-    updateInfoCells();
-  });
-
-  var drafts = window.localStorage.getItem("drafts");
-
-  if (drafts !== null) {
-    var draftsTable = document.getElementById("draftsTable");
-    var draftsJSON = JSON.parse(drafts);
-
-    for (var i = 0; i < draftsJSON.length; i++) {
-      var draftRow = document.createElement("tr");
-
-      draftRow.innerHTML =
-        '<td title="' +
-        draftsJSON[i].name +
-        '" class="dname"><b>' +
-        draftsJSON[i].name +
-        "</b></td><td>" +
-        draftsJSON[i].date +
-        '</td><td><button onclick="deleteDraft()">❌</button> <button onclick="loadDraft()">Load</button></td>';
-      draftsTable.children[0].appendChild(draftRow);
-    }
-  }
-  if (window.localStorage.getItem("colCheck1") === null) {
-    var columnCheckbox = document.querySelectorAll(".checkedByDefault");
-
-    for (var i = 0; i < columnCheckbox.length; i++)
-      columnCheckbox[i].checked = true;
-  } else {
-    for (var i = 1; i < 8; i++) {
-      var columnCheck = document.querySelectorAll(".columnCheckbox")[i - 1];
-      var check = JSON.parse(
-        window.localStorage.getItem("colCheck" + String(i)),
-      );
-
-      columnCheck.checked = check;
-    }
-  }
-
-  var saveDialog = document.getElementById("saveDialog");
-
-  document.getElementById("saveDraft").addEventListener("click", function () {
-    saveDialog.show();
-  });
-  document
-    .getElementById("saveDraftButton")
-    .addEventListener("click", function () {
-      if (window.localStorage.getItem("savedBanzuke") !== null) {
-        var draftsTable = document.getElementById("draftsTable");
-        var draftName = document.getElementById("draftName").value;
-        var currentDate = new Date().toLocaleString();
-        var draftCount = draftsTable.children[0].children.length + 1;
-        var draft = {
-          name: "",
-          date: "",
-          mainContent: "",
-        };
-        var draftRow = document.createElement("tr");
-        var draftsString = window.localStorage.getItem("drafts");
-        var draftsJSON;
-
-        draft.name = draftName;
-        draft.date = currentDate;
-        draft.mainContent = window.localStorage.getItem("savedBanzuke");
-        if (draftsString !== null) draftsJSON = JSON.parse(draftsString);
-        else draftsJSON = [];
-        draftsJSON.unshift(draft);
-        window.localStorage.setItem("drafts", JSON.stringify(draftsJSON));
-        draftRow.innerHTML =
-          '<td title="' +
-          draftName +
-          '" class="dname"><b>' +
-          draftName +
-          "</b></td><td>" +
-          currentDate +
-          '</td><td><button onclick="deleteDraft()">❌</button> <button onclick="loadDraft()">Load</button></td>';
-        draftsTable.children[0].prepend(draftRow);
-        document.getElementById("draftName").value = "";
-      }
-      saveDialog.close();
-    });
-  document.getElementById("closeDialog").addEventListener("click", function () {
-    saveDialog.close();
-  });
-  document
-    .getElementById("draftName")
-    .addEventListener("keypress", function () {
-      // If the user presses the "Enter" key on the keyboard
-      if (event.key === "Enter") {
-        // Cancel the default action, if needed
-        event.preventDefault();
-        // Trigger the button element with a click
-        document.getElementById("saveDraftButton").click();
-      }
-    });
-
-  function darkmode() {
-    document.body.classList.add("darkm"); //add a class to the body tag
-    checkbox.checked = true; //set checkbox to be checked state
-    localStorage.setItem("mode", "dark"); //store a name & value to know that dark mode is on
-  }
-
-  function nodark() {
-    document.body.classList.remove("darkm"); //remove added class from body tag
-    checkbox.checked = false; //set checkbox to be unchecked state
-    localStorage.setItem("mode", "light"); //store a name & value to know that dark mode is off or light mode is on
-  }
-
-  function writeTableTitles(endedBashoDate) {
-    var bashoYear = parseInt(endedBashoDate.substring(0, 4)),
-      bashoMonth = parseInt(endedBashoDate.slice(-2)),
-      tableTitle = document.getElementsByClassName("tableTitle");
-
-    const bashoMonthLookup = {
-        1: "Hatsu",
-        3: "Haru",
-        5: "Natsu",
-        7: "Nagoya",
-        9: "Aki",
-        11: "Kyushu",
-      },
-      getBashoName = (bMonth) => bashoMonthLookup[bMonth];
-
-    tableTitle[0].innerHTML =
-      getBashoName(bashoMonth) +
-      " " +
-      bashoYear +
-      tableTitle[0].innerHTML +
-      " Result";
-    if (bashoMonth > 9) {
-      bashoYear++;
-      bashoMonth = -1;
-    }
-    tableTitle[1].innerHTML =
-      getBashoName(bashoMonth + 2) +
-      " " +
-      bashoYear +
-      " Makuuchi Guess - " +
-      tableTitle[1].innerHTML;
-  }
-
-  function addRikishi() {
-    var table1 = document.getElementById("banzuke1"),
-      cell = table1.querySelectorAll(".redips-only");
-
-    for (var i = 0; i < cell.length; i++) {
-      for (var j = 0; j < theSekitori.length; j++) {
-        if (cell[i].classList.contains(theSekitori[j].split(" ")[0])) {
-          var card = document.createElement("div"),
-            rikiData = theSekitori[j].split(" "),
-            wins = rikiData[2].split("-")[0],
-            record =
-              rikiData.length == 4
-                ? rikiData[2] + " " + rikiData[3]
-                : rikiData[2];
-
-          if (rikiData.length > 3) rikiData[2] += " " + rikiData[3];
-
-          card.id = rikiData[0];
-          card.className = "redips-drag se";
-          if (rikiData[0].startsWith("Ms") || rikiData[0].startsWith("Sd"))
-            card.setAttribute("data-w", wins * 2);
-          else card.setAttribute("data-w", wins);
-          card.setAttribute("data-re", record);
-
-          rikiData[1] =
-            '<a href="https://sumodb.sumogames.de/Rikishi.aspx?r=' +
-            sekitoriID[j] +
-            '" target="_blank">' +
-            rikiData[1] +
-            "</a>";
-          rikiData[2] =
-            '<a href="https://sumodb.sumogames.de/Rikishi_basho.aspx?r=' +
-            sekitoriID[j] +
-            "&b=" +
-            basho +
-            '" target="_blank">' +
-            rikiData[2] +
-            "</a>";
-
-          card.innerHTML = rikiData[1];
-
-          if (retiredRikishi.includes(theSekitori[j].split(" ")[1])) {
-            //card.innerHTML = rikiData.join(' ');
-            card.style.backgroundColor = "rgb(203, 203, 203)";
-            card.className = "redips-drag intai";
-            card.setAttribute("title", "Retired");
-            card.removeAttribute("data-ko");
-          }
-
-          //card.setAttribute("onmouseout", "unhighlight()");
-
-          //cell[i].appendChild(holder);
-          cell[i].appendChild(card);
-          cell[i].classList.add("initCell");
-
-          var resCell, newRankCell;
-
-          if (i % 2 == 0) resCell = cell[i].previousSibling;
-          else resCell = cell[i].nextSibling;
-
-          resCell.innerHTML = rikiData[2];
-
-          //cell[i].style.borderInline = "1px solid #929292";
-        }
-      }
-    }
-  }
+  
 };
 
 function addMakushitaTable() {
@@ -1558,32 +1263,327 @@ console.log(rikishiObj);
 */
 
 document.addEventListener('DOMContentLoaded', function() {
-    const banzuke1Config = [
-        { prefix: 'Y', range: [1] },
-        { prefix: 'O', range: [1, 2] },
-        { prefix: 'S', range: [1] },
-        { prefix: 'K', range: [1] },
-        { prefix: 'M', range: Array.from({length: 17}, (_, i) => i + 1) },
-        { divider: true },
-        { prefix: 'J', range: Array.from({length: 14}, (_, i) => i + 1) },
-        { divider: true },
-        { prefix: 'Ms', range: Array.from({length: 60}, (_, i) => i + 1) }
-    ];
+  const banzuke1Config = [
+      { prefix: 'Y', range: [1] },
+      { prefix: 'O', range: [1, 2] },
+      { prefix: 'S', range: [1] },
+      { prefix: 'K', range: [1] },
+      { prefix: 'M', range: Array.from({length: 17}, (_, i) => i + 1) },
+      { divider: true },
+      { prefix: 'J', range: Array.from({length: 14}, (_, i) => i + 1) },
+      { divider: true },
+      { prefix: 'Ms', range: Array.from({length: 60}, (_, i) => i + 1) }
+  ];
 
-    const banzuke2Config = [
-        { prefix: 'Y', range: [1, 2] },
-        { prefix: 'O', range: [1, 2, 3] },
-        { prefix: 'S', range: [1, 2] },
-        { prefix: 'K', range: [1, 2] },
-        { prefix: 'M', range: Array.from({length: 18}, (_, i) => i + 1) },
-        { divider: 'Juryo Guess - <span id="juRik">0</span>/28' },
-        { prefix: 'J', range: Array.from({length: 14}, (_, i) => i + 1) },
-        { divider: 'Makushita Joi Guess - <span id="msRik">0</span>/30' },
-        { prefix: 'Ms', range: Array.from({length: 60}, (_, i) => i + 1) }
-    ];
+  const banzuke2Config = [
+      { prefix: 'Y', range: [1, 2] },
+      { prefix: 'O', range: [1, 2, 3] },
+      { prefix: 'S', range: [1, 2] },
+      { prefix: 'K', range: [1, 2] },
+      { prefix: 'M', range: Array.from({length: 18}, (_, i) => i + 1) },
+      { divider: 'Juryo Guess - <span id="juRik">0</span>/28' },
+      { prefix: 'J', range: Array.from({length: 14}, (_, i) => i + 1) },
+      { divider: 'Makushita Joi Guess - <span id="msRik">0</span>/30' },
+      { prefix: 'Ms', range: Array.from({length: 60}, (_, i) => i + 1) }
+  ];
+  var basho = "202403"; // The date of the basho just ended
 
+  // This must be a hyperlink
+  $("#exportToCsv1").on("click", function (event) {
+    exportTableToCSV.apply(this, [$("#banzuke1"), "banzuke1.csv"]);
+  });
+  $("#exportToCsv2").on("click", function (event) {
+    exportTableToCSV.apply(this, [$("#banzuke2"), "banzuke2.csv"]);
+  });
+
+  // removing unused local storage names of before *****************************
+  if (window.localStorage.getItem("banzuke1") !== null) {
+    window.localStorage.removeItem("banzuke1");
+    window.localStorage.removeItem("banzuke2");
+  }
+  if (window.localStorage.getItem("banzuke") !== null) {
+    window.localStorage.removeItem("banzuke");
+  }
+  if (window.localStorage.getItem("picks") !== null) {
+    window.localStorage.removeItem("picks");
+  }
+  // ***************************************************************************
+  if (window.localStorage.getItem("savedBanzuke") !== null) {
+    var saveDate = Date.parse(window.localStorage.getItem("savedBanzukeTime")),
+      expireDate = new Date(Date.UTC(2024, 2, 24, 9, 10)); //UTC time
+
+    if (saveDate < expireDate) window.localStorage.removeItem("savedBanzuke");
+    else {
+      document.getElementById("tableLiner").innerHTML =
+        window.localStorage.getItem("savedBanzuke");
+      if (document.querySelectorAll(".makushitaTable").length == 0) {
+        addMakushitaTable();
+        updateInfoCells();
+      }
+    }
+  }
+  if (window.localStorage.getItem("savedBanzuke") === null) {
     populateBanzukeTable('banzuke1Body', banzuke1Config, createRowBanzuke1);
     populateBanzukeTable('banzuke2Body', banzuke2Config, createRowBanzuke2);
+    writeTableTitles(basho);
+    addRikishi();
+    addMakushitaTable();
+  }
+
+  var radioButton = document.getElementsByClassName("checkbox"),
+    radioLocal = window.localStorage.getItem("radioButton"),
+    radioLocalDrop = window.localStorage.getItem("radioDrop");
+
+  if (radioLocal === null || radioLocal == "openRikishiPage")
+    radioButton[0].checked = true;
+  else if (radioLocal == "returnToOld") radioButton[1].checked = true;
+  else radioButton[2].checked = true;
+
+  if (radioLocalDrop === null || radioLocalDrop == "multiple")
+    radioButton[3].checked = true;
+  else if (radioLocalDrop == "shift") radioButton[4].checked = true;
+  else radioButton[5].checked = true;
+
+  var noteCells = document.querySelectorAll(".nte");
+
+  for (var i = 2; i < noteCells.length; i++) {
+    let time = 0;
+    noteCells[i].children[0].contentEditable = "true";
+    noteCells[i].children[0].addEventListener("input", function () {
+      // Reset the timer
+      clearTimeout(time);
+
+      time = setTimeout(function () {
+        saveBanzuke();
+        showSaving();
+      }, 1000);
+    });
+  }
+
+  var checkbox = document.getElementById("ChangeTheme"); //get the checkbox to a variable
+
+  //check storage if dark mode was on or off
+  if (localStorage.getItem("mode") == "dark") {
+    darkmode(); //if dark mode was on, run this funtion
+  } else {
+    nodark(); //else run this funtion
+  }
+
+  checkbox.addEventListener("change", function () {
+    //check if the checkbox is checked or not
+    if (checkbox.checked) {
+      darkmode(); //if the checkbox is checked, run this funtion
+    } else {
+      nodark(); //else run this funtion
+    }
+    updateInfoCells();
+  });
+
+  var drafts = window.localStorage.getItem("drafts");
+
+  if (drafts !== null) {
+    var draftsTable = document.getElementById("draftsTable");
+    var draftsJSON = JSON.parse(drafts);
+
+    for (var i = 0; i < draftsJSON.length; i++) {
+      var draftRow = document.createElement("tr");
+
+      draftRow.innerHTML =
+        '<td title="' +
+        draftsJSON[i].name +
+        '" class="dname"><b>' +
+        draftsJSON[i].name +
+        "</b></td><td>" +
+        draftsJSON[i].date +
+        '</td><td><button onclick="deleteDraft()">❌</button> <button onclick="loadDraft()">Load</button></td>';
+      draftsTable.children[0].appendChild(draftRow);
+    }
+  }
+  if (window.localStorage.getItem("colCheck1") === null) {
+    var columnCheckbox = document.querySelectorAll(".checkedByDefault");
+
+    for (var i = 0; i < columnCheckbox.length; i++)
+      columnCheckbox[i].checked = true;
+  } else {
+    for (var i = 1; i < 8; i++) {
+      var columnCheck = document.querySelectorAll(".columnCheckbox")[i - 1];
+      var check = JSON.parse(
+        window.localStorage.getItem("colCheck" + String(i)),
+      );
+
+      columnCheck.checked = check;
+    }
+  }
+
+  var saveDialog = document.getElementById("saveDialog");
+
+  document.getElementById("saveDraft").addEventListener("click", function () {
+    saveDialog.show();
+  });
+  document
+    .getElementById("saveDraftButton")
+    .addEventListener("click", function () {
+      if (window.localStorage.getItem("savedBanzuke") !== null) {
+        var draftsTable = document.getElementById("draftsTable");
+        var draftName = document.getElementById("draftName").value;
+        var currentDate = new Date().toLocaleString();
+        var draftCount = draftsTable.children[0].children.length + 1;
+        var draft = {
+          name: "",
+          date: "",
+          mainContent: "",
+        };
+        var draftRow = document.createElement("tr");
+        var draftsString = window.localStorage.getItem("drafts");
+        var draftsJSON;
+
+        draft.name = draftName;
+        draft.date = currentDate;
+        draft.mainContent = window.localStorage.getItem("savedBanzuke");
+        if (draftsString !== null) draftsJSON = JSON.parse(draftsString);
+        else draftsJSON = [];
+        draftsJSON.unshift(draft);
+        window.localStorage.setItem("drafts", JSON.stringify(draftsJSON));
+        draftRow.innerHTML =
+          '<td title="' +
+          draftName +
+          '" class="dname"><b>' +
+          draftName +
+          "</b></td><td>" +
+          currentDate +
+          '</td><td><button onclick="deleteDraft()">❌</button> <button onclick="loadDraft()">Load</button></td>';
+        draftsTable.children[0].prepend(draftRow);
+        document.getElementById("draftName").value = "";
+      }
+      saveDialog.close();
+    });
+  document.getElementById("closeDialog").addEventListener("click", function () {
+    saveDialog.close();
+  });
+  document
+    .getElementById("draftName")
+    .addEventListener("keypress", function () {
+      // If the user presses the "Enter" key on the keyboard
+      if (event.key === "Enter") {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        // Trigger the button element with a click
+        document.getElementById("saveDraftButton").click();
+      }
+    });
+
+  function darkmode() {
+    document.body.classList.add("darkm"); //add a class to the body tag
+    checkbox.checked = true; //set checkbox to be checked state
+    localStorage.setItem("mode", "dark"); //store a name & value to know that dark mode is on
+  }
+
+  function nodark() {
+    document.body.classList.remove("darkm"); //remove added class from body tag
+    checkbox.checked = false; //set checkbox to be unchecked state
+    localStorage.setItem("mode", "light"); //store a name & value to know that dark mode is off or light mode is on
+  }
+
+  function writeTableTitles(endedBashoDate) {
+    var bashoYear = parseInt(endedBashoDate.substring(0, 4)),
+      bashoMonth = parseInt(endedBashoDate.slice(-2)),
+      tableTitle = document.getElementsByClassName("tableTitle");
+
+    const bashoMonthLookup = {
+        1: "Hatsu",
+        3: "Haru",
+        5: "Natsu",
+        7: "Nagoya",
+        9: "Aki",
+        11: "Kyushu",
+      },
+      getBashoName = (bMonth) => bashoMonthLookup[bMonth];
+
+    tableTitle[0].innerHTML =
+      getBashoName(bashoMonth) +
+      " " +
+      bashoYear +
+      tableTitle[0].innerHTML +
+      " Result";
+    if (bashoMonth > 9) {
+      bashoYear++;
+      bashoMonth = -1;
+    }
+    tableTitle[1].innerHTML =
+      getBashoName(bashoMonth + 2) +
+      " " +
+      bashoYear +
+      " Makuuchi Guess - " +
+      tableTitle[1].innerHTML;
+  }
+
+  function addRikishi() {
+    var table1 = document.getElementById("banzuke1"),
+      cell = table1.querySelectorAll(".redips-only");
+
+    for (var i = 0; i < cell.length; i++) {
+      for (var j = 0; j < theSekitori.length; j++) {
+        if (cell[i].classList.contains(theSekitori[j].split(" ")[0])) {
+          var card = document.createElement("div"),
+            rikiData = theSekitori[j].split(" "),
+            wins = rikiData[2].split("-")[0],
+            record =
+              rikiData.length == 4
+                ? rikiData[2] + " " + rikiData[3]
+                : rikiData[2];
+
+          if (rikiData.length > 3) rikiData[2] += " " + rikiData[3];
+
+          card.id = rikiData[0];
+          card.className = "redips-drag se";
+          if (rikiData[0].startsWith("Ms") || rikiData[0].startsWith("Sd"))
+            card.setAttribute("data-w", wins * 2);
+          else card.setAttribute("data-w", wins);
+          card.setAttribute("data-re", record);
+
+          rikiData[1] =
+            '<a href="https://sumodb.sumogames.de/Rikishi.aspx?r=' +
+            sekitoriID[j] +
+            '" target="_blank">' +
+            rikiData[1] +
+            "</a>";
+          rikiData[2] =
+            '<a href="https://sumodb.sumogames.de/Rikishi_basho.aspx?r=' +
+            sekitoriID[j] +
+            "&b=" +
+            basho +
+            '" target="_blank">' +
+            rikiData[2] +
+            "</a>";
+
+          card.innerHTML = rikiData[1];
+
+          if (retiredRikishi.includes(theSekitori[j].split(" ")[1])) {
+            //card.innerHTML = rikiData.join(' ');
+            card.style.backgroundColor = "rgb(203, 203, 203)";
+            card.className = "redips-drag intai";
+            card.setAttribute("title", "Retired");
+            card.removeAttribute("data-ko");
+          }
+
+          //card.setAttribute("onmouseout", "unhighlight()");
+
+          //cell[i].appendChild(holder);
+          cell[i].appendChild(card);
+          cell[i].classList.add("initCell");
+
+          var resCell, newRankCell;
+
+          if (i % 2 == 0) resCell = cell[i].previousSibling;
+          else resCell = cell[i].nextSibling;
+
+          resCell.innerHTML = rikiData[2];
+
+          //cell[i].style.borderInline = "1px solid #929292";
+        }
+      }
+    }
+  }
 });
 
 function populateBanzukeTable(tableId, config, createRow) {
@@ -1636,7 +1636,7 @@ function createRowBanzuke2(rank) {
 
 function createDividerRow(title) {
     const row = document.createElement('tr');
-    if (title) {
+    if (typeof title === "string") {
         row.innerHTML = `<th colspan="9" class="tableTitle">${title}</th>`;
     } else {
         row.classList.add('divider');
