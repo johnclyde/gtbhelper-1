@@ -1083,6 +1083,7 @@ redips.arrange = function () {
       var rikishiRank = theSekitori[i].split(' ')[0];
 
       if (rikishiRank.startsWith("Ms") && rikishiRank.slice(2, -1) > 15) break;
+      else if (retiredRikishi.includes(theSekitori[i].split(' ')[1])) continue;
       if (!rikishi.parentNode.classList.contains("b2")) {
         var holder = document.createElement("a");
 
