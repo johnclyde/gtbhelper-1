@@ -32,17 +32,17 @@
     <div id="options">
       <fieldset class="option">
         <legend>Double-click on rikishi</Legend>
-          <label><input type="radio" class="checkbox" name="onDoubleClick" onclick="saveRadio(this)" value="openRikishiPage">Open Rikishi Information page</label>
+          <label><input type="radio" class="checkbox" name="onDoubleClick" value="openRikishiPage">Open Rikishi Information page</label>
           <br>
-          <label><input type="radio" class="checkbox" name="onDoubleClick" onclick="saveRadio(this)" value="returnToOld">Return it to the old banzuke</label>
+          <label><input type="radio" class="checkbox" name="onDoubleClick" value="returnToOld">Return it to the old banzuke</label>
           <br>
-          <label><input type="radio" class="checkbox" name="onDoubleClick" onclick="saveRadio(this)" value="doNothing">Do nothing</label>
+          <label><input type="radio" class="checkbox" name="onDoubleClick" value="doNothing">Do nothing</label>
         </fieldset>
         <fieldset class="option">
           <legend>Dropping on an occupied slot</legend>
-          <label title=""><input type="radio" class="checkbox" name="dropMode" onclick="saveDropRadio(this)" value="multiple">Stack</label>
-          <label title="Make room and lower rikishi below by one slot"><input type="radio" class="checkbox" name="dropMode" onclick="saveDropRadio(this)" value="shift">Shift</label>
-          <label title="Don't drop to occupied slot"><input type="radio" class="checkbox" name="dropMode" onclick="saveDropRadio(this)" value="disable">Disable</label>
+          <label title=""><input type="radio" class="checkbox" name="dropMode" value="multiple">Stack</label>
+          <label title="Make room and lower rikishi below by one slot"><input type="radio" class="checkbox" name="dropMode" value="shift">Shift</label>
+          <label title="Don't drop to occupied slot"><input type="radio" class="checkbox" name="dropMode" value="disable">Disable</label>
         </fieldset>
       <!--
       <fieldset id="hoshitori" class="option">
@@ -62,8 +62,8 @@
       <a href="#" id="exportToCsv1" class="exportToCsvButton">Table 1</a>
       <a href="#" id="exportToCsv2" class="exportToCsvButton">Table 2</a>
       <label><input id="tooltipCheckbox" type="checkbox" name="checkbox" autocomplete="on">Disable tooltips</label>
-      <button onclick="redips.arrange()">Auto-arrange to current ranks</button>
-      <button id="resetBanzuke" onclick="redips.resetBanzuke()">Reset changes</button>
+      <button id="autoArrange">Auto-arrange to current ranks</button>
+      <button id="resetBanzuke">Reset changes</button>
     </fieldset>
     <fieldset id="saveLoad" class="option">
       <legend>Save/load drafts</legend>
@@ -103,9 +103,9 @@
       <tr><td class="banzukeContainer">
         <div id="pop1" class="columnPopup">
           Columns... 
-          <label><input id="colCheck1" autocomplete="off" class="columnCheckbox forB1 checkedByDefault" type="checkbox" onclick="toggleColumns(this)" value="rs1">Result</label>
-          <label><input id="colCheck2" autocomplete="off" class="columnCheckbox forB1" type="checkbox" onclick="toggleColumns(this)" value="new">New Rank</label>
-          <label><input id="colCheck3" autocomplete="off" class="columnCheckbox forB1" type="checkbox" onclick="toggleColumns(this)" value="ch1">Rank Change</label>
+          <label><input id="colCheck1" autocomplete="off" class="columnCheckbox forB1 checkedByDefault" type="checkbox" value="rs1">Result</label>
+          <label><input id="colCheck2" autocomplete="off" class="columnCheckbox forB1" type="checkbox" value="new">New Rank</label>
+          <label><input id="colCheck3" autocomplete="off" class="columnCheckbox forB1" type="checkbox" value="ch1">Rank Change</label>
         </div>
         <table id="banzuke1" class="banzukeTable">
           <thead>
@@ -121,10 +121,10 @@
         </table>
       </td><td class="banzukeContainer">
         <div class="columnPopup">
-          <label><input id="colCheck4" autocomplete="off" class="columnCheckbox forB2 checkedByDefault" type="checkbox" onclick="toggleColumns(this)" value="rs2">Result</label>
-          <label><input id="colCheck5" autocomplete="off" class="columnCheckbox forB2 checkedByDefault" type="checkbox" onclick="toggleColumns(this)" value="cur">Current Rank</label>
-          <label><input id="colCheck6" autocomplete="off" class="columnCheckbox forB2 checkedByDefault" type="checkbox" onclick="toggleColumns(this)" value="ch2">Rank Change</label>
-          <label><input id="colCheck7" autocomplete="off" class="columnCheckbox forB2" type="checkbox" onclick="toggleColumns(this)" value="nte">Notes</label>
+          <label><input id="colCheck4" autocomplete="off" class="columnCheckbox forB2 checkedByDefault" type="checkbox" value="rs2">Result</label>
+          <label><input id="colCheck5" autocomplete="off" class="columnCheckbox forB2 checkedByDefault" type="checkbox" value="cur">Current Rank</label>
+          <label><input id="colCheck6" autocomplete="off" class="columnCheckbox forB2 checkedByDefault" type="checkbox" value="ch2">Rank Change</label>
+          <label><input id="colCheck7" autocomplete="off" class="columnCheckbox forB2" type="checkbox" value="nte">Notes</label>
         </div>
         <table id="banzuke2" class="mainTable banzukeTable">
           <thead>
