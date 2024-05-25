@@ -319,8 +319,8 @@ var sekitoriID = [
 
 //***** Just update the "basho" variable and you're all done. *****
 
-let redips = {},
-  rd = REDIPS.drag;
+export let redips = {};
+let rd = REDIPS.drag;
 
 function exportTableToCSV($table, filename) {
   var $rows = $table.find("tr:has(td),tr:has(th)"),
@@ -528,11 +528,11 @@ function deleteDraft() {
   }
 }
 
-function saveRadio(radioButton) {
+export function saveRadio(radioButton) {
   window.localStorage.setItem("radioButton", radioButton.value);
 }
 
-function saveDropRadio(button) {
+export function saveDropRadio(button) {
   if (button.value == "disable") rd.dropMode = "single";
   else rd.dropMode = "multiple";
 
@@ -861,7 +861,7 @@ redips.init = function () {
   };
 };
 
-function toggleColumns(button) {
+export function toggleColumns(button) {
   var column = button.value;
   var colCell = document.getElementsByClassName(column);
   var colCheck = document.querySelectorAll(".columnCheckbox");
