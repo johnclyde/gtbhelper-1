@@ -112,58 +112,63 @@ for (let button of document.getElementsByName("dropMode")) {
 }
 
 function addMakushitaTable() {
-  var container = document.querySelectorAll(".banzukeContainer")[1];
-  var table1 = document.createElement("table");
-  var table2 = document.createElement("table");
-  var table3 = document.createElement("table");
-  var groups = [[], [], [], [], [], [], [], []];
+  const container = document.querySelectorAll(".banzukeContainer")[1];
+  const table1 = document.createElement("table");
+  const table2 = document.createElement("table");
+  const table3 = document.createElement("table");
+  const groups = [[], [], [], [], [], [], [], []];
 
   table1.className = "makushitaTable";
   table2.className = "makushitaTable";
   table3.className = "makushitaTable";
-  for (var i = 0; i < theSekitori.length; i++) {
-    if (theSekitori[i].startsWith("Ms")) {
-      var rikishiData = theSekitori[i].split(" ");
 
-      groups[rikishiData[2].charAt(0)].push({
-        rikishi: rikishiData[0] + " " + rikishiData[1],
-        id: sekitoriID[i],
+  allRikishi.forEach(rikishi => {
+    if (rikishi.rank.startsWith("Ms")) {
+      const wins = parseInt(rikishi.winCount.split("-")[0], 10);
+      groups[wins].push({
+        name: rikishi.name,
+        id: rikishi.id,
       });
     }
-  }
+  });
+
+  const appendTableRows = (table, headerText, rows) => {
+    const headerRow = document.createElement("tr");
+    const header = document.createElement("th");
+
+    header.colSpan = 2;
+    header.innerText = headerText;
+    headerRow.appendChild(header);
+    table.children[0].appendChild(headerRow);
+
+    rows.forEach(rikishi => {
+      const rikishiRow = document.createElement("tr");
+      const rikishiCell = document.createElement("td");
+      const link = document.createElement("a");
+
+      link.href = `https://sumodb.sumogames.de/Rikishi.aspx?r=${rikishi.id}`;
+      link.target = "_blank";
+      link.innerText = `${rikishi.rank} ${rikishi.name}`;
+      rikishiCell.appendChild(link);
+      rikishiCell.id = rikishi.name.toLowerCase();
+      rikishiRow.appendChild(rikishiCell);
+      rikishiRow.appendChild(document.createElement("td"));
+      table.children[0].appendChild(rikishiRow);
+    });
+  };
+
   table1.appendChild(document.createElement("tbody"));
   table2.appendChild(document.createElement("tbody"));
   table3.appendChild(document.createElement("tbody"));
-  for (var i = 7; i >= 0; i--) {
+
+  for (let i = 7; i >= 0; i--) {
     if (groups[i].length > 0) {
-      var headerRow = document.createElement("tr");
-      var header = document.createElement("th");
-
-      header.colSpan = 2;
-      header.innerText = i + " wins";
-      headerRow.appendChild(header);
-      if (i > 4) table1.children[0].appendChild(headerRow);
-      else if (i == 4) table2.children[0].appendChild(headerRow);
-      else table3.children[0].appendChild(headerRow);
-      for (var j = 0; j < groups[i].length; j++) {
-        var rikishiRow = document.createElement("tr");
-        var rikishiCell = document.createElement("td");
-        var link = document.createElement("a");
-
-        link.href =
-          "https://sumodb.sumogames.de/Rikishi.aspx?r=" + groups[i][j].id;
-        link.target = "_blank";
-        link.innerText = groups[i][j].rikishi;
-        rikishiCell.appendChild(link);
-        rikishiCell.id = groups[i][j].rikishi.split(" ")[1].toLowerCase();
-        rikishiRow.appendChild(rikishiCell);
-        rikishiRow.appendChild(document.createElement("td"));
-        if (i > 4) table1.children[0].appendChild(rikishiRow);
-        else if (i == 4) table2.children[0].appendChild(rikishiRow);
-        else table3.children[0].appendChild(rikishiRow);
-      }
+      if (i > 4) appendTableRows(table1, `${i} wins`, groups[i]);
+      else if (i === 4) appendTableRows(table2, `${i} wins`, groups[i]);
+      else appendTableRows(table3, `${i} wins`, groups[i]);
     }
   }
+
   container.appendChild(table1);
   container.appendChild(table2);
   container.appendChild(table3);
