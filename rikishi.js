@@ -336,7 +336,7 @@ class Rikishi {
   }
 }
 
-class RetiredRikishi extends Rikishi {
+export class RetiredRikishi extends Rikishi {
   constructor(rank, name, winCount, id) {
     super(rank, name, winCount, id);
   }

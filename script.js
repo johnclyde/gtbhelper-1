@@ -126,6 +126,7 @@ function addMakushitaTable() {
     if (rikishi.rank.startsWith("Ms")) {
       const wins = parseInt(rikishi.winCount.split("-")[0], 10);
       groups[wins].push({
+        rank: rikishi.rank,
         name: rikishi.name,
         id: rikishi.id,
       });
@@ -775,11 +776,11 @@ redips.arrange = function () {
       juCounter = document.getElementById("juRik"),
       makuCounter = document.getElementById("makRik");
 
-    allRikishi.forEach(rikishi => {
+    for (let rikishi of allRikishi) {
       const rikishiElement = document.getElementById(rikishi.rank);
 
-      if (rikishi.rank.startsWith("Ms") && parseInt(rikishi.rank.slice(2)) > 15) return;
-      if (rikishi instanceof RetiredRikishi) return;
+      if (rikishi.rank.startsWith("Ms") && parseInt(rikishi.rank.slice(2)) > 15) break;
+      if (rikishi instanceof RetiredRikishi) continue;
 
       if (!rikishiElement.parentNode.classList.contains("b2")) {
         const holder = document.createElement("a");
@@ -810,7 +811,7 @@ redips.arrange = function () {
         obj: rikishiElement,
         target: document.querySelector(`[data-r="${rikishi.rank}"]`),
       });
-    });
+    };
 
     updateInfoCells();
   }
@@ -1229,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function addRikishi() {
     const table1 = document.getElementById("banzuke1"),
-    const cells = table1.querySelectorAll(".redips-only");
+      cells = table1.querySelectorAll(".redips-only");
 
     cells.forEach(cell => {
       allRikishi.forEach(rikishi => {
@@ -1239,11 +1240,11 @@ document.addEventListener('DOMContentLoaded', function() {
           cell.appendChild(card);
           cell.classList.add("initCell");
 
-          let resCell = cell.previousElementSibling || cell.nextElementSibling;
+          let resCell = cell.previousElementSibling.classList.contains("rs1") ? cell.previousElementSibling : cell.nextElementSibling;
           resCell.innerHTML = rikishi.getRecordLink(basho);
         }
-      }
-    }
+      });
+    });
   }
 });
 
