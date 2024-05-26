@@ -219,6 +219,7 @@ function loadDraft() {
         }, 1000);
       });
     }
+    columnCheckFunction();
   }
 }
 
@@ -569,36 +570,27 @@ redips.init = function () {
   };
 };
 
-for (let button of document.getElementsByClassName("columnCheckbox")) {
-  button.addEventListener("click", () => {
-    var column = button.value;
-    var colCell = document.getElementsByClassName(column);
-    var colCheck = document.querySelectorAll(".columnCheckbox");
-    var tableTitle = document.querySelectorAll(".tableTitle");
-
-    if (button.checked) {
-      if (button.classList.contains("forB1")) tableTitle[0].colSpan += 2;
-      else {
-        tableTitle[1].colSpan += 2;
-        tableTitle[2].colSpan += 2;
+function columnCheckFunction() {
+  for (let button of document.getElementsByClassName("columnCheckbox")) {
+    button.addEventListener("click", () => {
+      var column = button.value;
+      var colCell = document.getElementsByClassName(column);
+      var colCheck = document.querySelectorAll(".columnCheckbox");
+  
+      if (button.checked) {
+        for (var i = 0; i < colCell.length; i++) colCell[i].classList.remove("hid");
+      } else {
+        for (var i = 0; i < colCell.length; i++) colCell[i].classList.add("hid");
       }
-      for (var i = 0; i < colCell.length; i++) colCell[i].classList.remove("hid");
-    } else {
-      if (button.classList.contains("forB1")) tableTitle[0].colSpan -= 2;
-      else {
-        tableTitle[1].colSpan -= 2;
-        tableTitle[2].colSpan -= 2;
+      for (var i = 1; i < 8; i++) {
+        window.localStorage.setItem(
+          "colCheck" + String(i),
+          colCheck[i - 1].checked,
+        );
       }
-      for (var i = 0; i < colCell.length; i++) colCell[i].classList.add("hid");
-    }
-    for (var i = 1; i < 8; i++) {
-      window.localStorage.setItem(
-        "colCheck" + String(i),
-        colCheck[i - 1].checked,
-      );
-    }
-    saveBanzuke();
-  });
+      saveBanzuke();
+    });
+  }
 }
 
 function updateInfoCells() {
@@ -1182,6 +1174,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById("resetBanzuke").addEventListener("click", redips.resetBanzuke);
   document.getElementById("autoArrange").addEventListener("click", redips.arrange);
+  columnCheckFunction();
 
   function darkmode() {
     document.body.classList.add("darkm"); //add a class to the body tag
@@ -1226,6 +1219,8 @@ document.addEventListener('DOMContentLoaded', function() {
       bashoYear +
       " Makuuchi Guess - " +
       tableTitle[1].innerHTML;
+      tableTitle[0].colSpan = '9';
+      tableTitle[1].colSpan = "11";
   }
 
   function addRikishi() {
@@ -1303,7 +1298,7 @@ function createRowBanzuke2(rank) {
 function createDividerRow(title) {
     const row = document.createElement('tr');
     if (typeof title === "string") {
-        row.innerHTML = `<th colspan="9" class="tableTitle">${title}</th>`;
+        row.innerHTML = `<th colspan="11" class="tableTitle">${title}</th>`;
     } else {
         row.classList.add('divider');
     }
