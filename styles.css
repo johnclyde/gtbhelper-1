@@ -679,3 +679,7 @@ footer {
   border: solid dimgray;
   border-width: 0 1px 1px 0;
 }
+
+.initCell {
+  box-shadow: 3px 3px inset #00000014;
+}

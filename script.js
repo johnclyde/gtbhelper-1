@@ -904,60 +904,6 @@ if (window.addEventListener)
   window.addEventListener("load", redips.init, false);
 else if (window.attachEvent) window.attachEvent("onload", redips.init);
 
-/*
-var hoshitori = [], 
-    rikishiTr = document.getElementsByTagName("tr");
-
-for (var i = 1; i < rikishiTr.length; i++) {
-  var recordArr = [], 
-    aiteArr = [], 
-    hyper = rikishiTr[i].getElementsByTagName('a');
-
-  for (var j = 1; j < hyper.length; j++) {
-    aiteArr.push(hyper[j].title.split(' ')[2]);
-    if (hyper[j].children[0].getAttribute("src") == "img/w.gif") {
-      if (hyper[j].title.split(' ')[3] == "fusen") 
-        recordArr.push(3);
-      else 
-        recordArr.push(1);
-    }
-    else {
-      if (hyper[j].title.split(' ')[3] == "fusen") 
-        recordArr.push(2);
-      else 
-        recordArr.push(0);
-    }
-  }
-  var rikishiObj = {
-    record: recordArr, 
-    aite: aiteArr
-  }
-  hoshitori.push(rikishiObj);
-}
-
-var tori = document.getElementsByClassName("rb_torikumi"), recordArr = [], aiteArr = [], record;
-for (var i = 0; i < tori[0].children[0].children.length; i++) {
-  record = tori[0].children[0].children[i].children[1].children[0].src.split('_')[1];
-  switch (record) {
-    case "kuro.gif":
-      record = 0; break;
-    case "shiro.gif":
-      record = 1; break;
-    case "fusenpai.gif":
-      record = 2; break;
-    case "fusensho.gif":
-      record = 3; break;
-  }
-  recordArr.push(record);
-  aiteArr.push(tori[0].children[0].children[i].children[3].children[0].innerHTML.split(' ')[1]);
-}
-var rikishiObj = {
-  record: recordArr, 
-  aite: aiteArr
-}
-console.log(rikishiObj);
-*/
-
 document.addEventListener('DOMContentLoaded', function() {
   const banzuke1Config = [
       { prefix: 'Y', range: [1] },
@@ -968,7 +914,8 @@ document.addEventListener('DOMContentLoaded', function() {
       { divider: true },
       { prefix: 'J', range: Array.from({length: 14}, (_, i) => i + 1) },
       { divider: true },
-      { prefix: 'Ms', range: Array.from({length: 60}, (_, i) => i + 1) }
+      { prefix: 'Ms', range: Array.from({length: 60}, (_, i) => i + 1) },
+      { prefix: 'TD', range: [""] }
   ];
 
   const banzuke2Config = [
@@ -980,9 +927,9 @@ document.addEventListener('DOMContentLoaded', function() {
       { divider: 'Juryo Guess - <span id="juRik">0</span>/28' },
       { prefix: 'J', range: Array.from({length: 14}, (_, i) => i + 1) },
       { divider: 'Makushita Joi Guess - <span id="msRik">0</span>/30' },
-      { prefix: 'Ms', range: Array.from({length: 60}, (_, i) => i + 1) }
+      { prefix: 'Ms', range: Array.from({length: 15}, (_, i) => i + 1) }
   ];
-  var basho = "202403"; // The date of the basho just ended
+  var basho = "202405"; // The date of the basho just ended
 
   // This must be a hyperlink
   $("#exportToCsv1").on("click", function (event) {
@@ -1261,7 +1208,16 @@ function populateBanzukeTable(tableId, config, createRow) {
 
 function createRowBanzuke1(rank) {
     const row = document.createElement('tr');
-    row.innerHTML = `
+    if (rank == "TD") {
+      row.innerHTML = `
+        <td class="rs1"></td>
+        <td class="redips-only Ms60${rank}"></td>
+        <td class="new hid"></td>
+        <td class="ch1 hid"></td>
+        <th>${rank}</th>`;
+    }
+    else {
+      row.innerHTML = `
         <td class="rs1"></td>
         <td class="redips-only ${rank}e"></td>
         <td class="new hid"></td>
@@ -1271,6 +1227,7 @@ function createRowBanzuke1(rank) {
         <td class="rs1"></td>
         <td class="new hid"></td>
         <td class="ch1 hid"></td>`;
+    }
     if (['Y', 'O', 'S', 'K'].includes(rank.charAt(0))) 
       row.className = rank.charAt(0).toLowerCase() + "Row";
     return row;
