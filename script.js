@@ -1,6 +1,6 @@
 "use strict";
 
-import { allRikishi } from './rikishi.js';
+import { allRikishi, RetiredRikishi } from './rikishi.js';
 
 /*
 var shikonaCells = document.getElementsByClassName("shikona");
@@ -274,12 +274,12 @@ redips.init = function () {
   if (radioDrop[2].checked) rd.dropMode = "single";
   else rd.dropMode = "multiple";
 
-  for (var i = 0; i < theSekitori.length; i++) {
-    if (theSekitori[i] !== "") {
-      var rank = theSekitori[i].split(" ")[0];
-      rd.only.div[rank] = rank;
+  allRikishi.forEach(rikishi => {
+    if (rikishi.rank !== "") {
+      rd.only.div[rikishi.rank] = rikishi.rank;
     }
-  }
+  });
+
   rd.hover.colorTd = "royalblue";
 
   var intervalID;
@@ -775,34 +775,43 @@ redips.arrange = function () {
       juCounter = document.getElementById("juRik"),
       makuCounter = document.getElementById("makRik");
 
-    for (var i = 0; i < theSekitori.length; i++) {
-      var rikishi = document.getElementById(theSekitori[i].split(' ')[0]);
-      var rikishiRank = theSekitori[i].split(' ')[0];
+    allRikishi.forEach(rikishi => {
+      const rikishiElement = document.getElementById(rikishi.rank);
 
-      if (rikishiRank.startsWith("Ms") && rikishiRank.slice(2, -1) > 15) break;
-      else if (retiredRikishi.includes(theSekitori[i].split(' ')[1])) continue;
-      if (!rikishi.parentNode.classList.contains("b2")) {
-        var holder = document.createElement("a");
+      if (rikishi.rank.startsWith("Ms") && parseInt(rikishi.rank.slice(2)) > 15) return;
+      if (rikishi instanceof RetiredRikishi) return;
 
-        holder.innerHTML = rikishi.innerText;
-        holder.href = rikishi.children[0].href;
+      if (!rikishiElement.parentNode.classList.contains("b2")) {
+        const holder = document.createElement("a");
+
+        holder.innerHTML = rikishiElement.innerText;
+        holder.href = rikishiElement.children[0].href;
         holder.target = "_blank";
-        rikishi.parentNode.appendChild(holder);
+        rikishiElement.parentNode.appendChild(holder);
       } else {
-        if (rikishi.parentNode.dataset.r.startsWith("J"))
+        if (rikishiElement.parentNode.dataset.r.startsWith("J")) {
           juCounter.innerHTML--;
-        else if (rikishi.parentNode.dataset.r.startsWith("Ms"))
+        } else if (rikishiElement.parentNode.dataset.r.startsWith("Ms")) {
           msCounter.innerHTML--;
-        else makuCounter.innerHTML--;
+        } else {
+          makuCounter.innerHTML--;
+        }
       }
-      if (rikishiRank.startsWith("J")) juCounter.innerHTML++;
-      else if (rikishiRank.startsWith("Ms")) msCounter.innerHTML++;
-      else makuCounter.innerHTML++;
+
+      if (rikishi.rank.startsWith("J")) {
+        juCounter.innerHTML++;
+      } else if (rikishi.rank.startsWith("Ms")) {
+        msCounter.innerHTML++;
+      } else {
+        makuCounter.innerHTML++;
+      }
+
       rd.moveObject({
-        obj: rikishi,
-        target: document.querySelector('[data-r="' + rikishiRank + '"]'),
+        obj: rikishiElement,
+        target: document.querySelector(`[data-r="${rikishi.rank}"]`),
       });
-    }
+    });
+
     updateInfoCells();
   }
 };
