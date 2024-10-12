@@ -1,5 +1,8 @@
-if (window.location.href != "http://sumodb.sumogames.de/gtb/GTBEntry.aspx")
-  alert("Please make sure you're on the GTB entry form page (and the URL starts with http, not https), then try again.");
+if (window.location.href != "http://sumodb.sumogames.de/gtb/GTBEntry.aspx") {
+  setTimeout(() => {
+    alert("Please make sure you're on the GTB entry form page (and the URL starts with http, not https), then try again.");
+  }, 1000);
+}
 else if (!document.querySelector("#helperFrame")) {
   var frame = document.createElement("iframe");
   var helperUrl = "https://gtbhelper.vercel.app";
