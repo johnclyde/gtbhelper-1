@@ -11,6 +11,64 @@ body {
   margin: 0;
 }
 
+.darkm #links {
+  background: gray;
+}
+
+@keyframes colorChange {
+  from {
+    background-color: rgb(224, 136, 151);
+  }
+  to {
+    background-color: rgb(107, 217, 107);
+  }
+}
+
+#newFeature {
+  padding: 15px;
+  display: block;
+  width: fit-content;
+  animation-name: colorChange;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: linear;
+  text-shadow: 1px 1px #0006;
+}
+
+.darkm #insDialog {
+  background: #757575;
+}
+
+.insSteps {
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+#insDialog {
+  max-width: 75%;
+}
+
+#bookmarkletCode {
+  color: rgb(34, 34, 34);
+  cursor: text;
+  margin: 5px 0 5px 5px;
+  width: 50%;
+}
+
+#copyCode {
+  border-radius: 0 5px 5px 0;
+  display: inline;
+}
+
+.closeX {
+  float: right;
+  border: 1px solid;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+}
+
 #gtb {
   font-family: Verdana;
 }
@@ -39,6 +97,7 @@ label {
 }
 
 #links {
+  width: fit-content;
   margin: 15px;
 }
 

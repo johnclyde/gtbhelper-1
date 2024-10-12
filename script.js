@@ -15,6 +15,45 @@ for (var i = 0; i < 100; i++) {
 let redips = {},
   rd = REDIPS.drag;
 
+$("#openModal").on("click", function() {
+  document.getElementById("insDialog").showModal();
+});
+$(".closeIns").on("click", function() {
+  document.getElementById("insDialog").close();
+});
+$("#copyCode").on("click", function() {
+  var textBox = document.querySelector("#bookmarkletCode");
+  
+  textBox.select();
+  textBox.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(textBox.value);
+})
+addEventListener("message", async function(event) {
+  var sumodbUrl = "http://sumodb.sumogames.de";
+
+  if (event.origin != sumodbUrl) return;
+  if (event.data == "Requesting data") {
+    var ids = JSON.parse(this.document.cookie.split('=')[1]);
+
+    event.source.postMessage({message: "rikishi ids", ids: ids}, event.origin);
+  }
+});
+
+function setCookie() {
+  var slots = document.querySelectorAll(".redips-only.b2");
+  var ids = [];
+
+  for (var i = 0; i < 54; i++) {
+    if (slots[i].children.length > 0)
+      ids.push(parseInt(slots[i].children[0].children[0].href.split('=')[1]));
+    else
+      ids.push(-1);
+    if (slots[i].dataset.r == "S2w" || slots[i].dataset.r == "K2w")
+      ids.push(-1, -1);
+  }
+  document.cookie = "ids=" + JSON.stringify(ids) + "; SameSite=None; Secure";
+}
+
 for (let button of document.getElementsByName("onDoubleClick")) {
   button.addEventListener("click", () => {
     window.localStorage.setItem("radioButton", button.value);
@@ -26,7 +65,7 @@ for (let button of document.getElementsByName("dropMode")) {
     if (button.value == "disable") rd.dropMode = "single";
     else rd.dropMode = "multiple";
     window.localStorage.setItem("radioDrop", button.value);
-  })
+  });
 }
 
 function addMakushitaTable() {
@@ -139,6 +178,7 @@ function loadDraft() {
     }
     columnCheckFunction();
   }
+  setCookie();
 }
 
 function deleteDraft() {
@@ -174,6 +214,7 @@ function saveBanzuke() {
     document.getElementById("tableLiner").innerHTML,
   );
   window.localStorage.setItem("savedBanzukeTime", date.toString());
+  setCookie();
 }
 
 // *****************************************************************************
@@ -639,6 +680,7 @@ redips.resetBanzuke = function () {
       c6 = document.querySelectorAll(".nte");
 
     window.localStorage.removeItem("savedBanzuke");
+    setCookie();
     document.getElementById("makRik").innerHTML = 0;
     for (var i = 1; i < 8; i++)
       window.localStorage.removeItem("colCheck" + String(i));
@@ -722,8 +764,8 @@ redips.arrange = function () {
         target: document.querySelector(`[data-r="${rikishi.rank}"]`),
       });
     };
-
     updateInfoCells();
+    saveBanzuke();
   }
 };
 
@@ -884,6 +926,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateInfoCells();
       }
     }
+    setCookie();
   }
   if (window.localStorage.getItem("savedBanzuke") === null) {
     populateBanzukeTable('banzuke1Body', banzuke1Config, createRowBanzuke1);
@@ -891,6 +934,7 @@ document.addEventListener('DOMContentLoaded', function() {
     writeTableTitles(basho);
     addRikishi();
     addMakushitaTable();
+    setCookie();
   }
 
   var radioButton = document.getElementsByClassName("checkbox"),
