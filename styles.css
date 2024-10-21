@@ -42,7 +42,7 @@ body {
 
 .insSteps {
   display: inline-block;
-  margin-bottom: 5px;
+  margin: 3px;
 }
 
 #insDialog {
