@@ -23,10 +23,21 @@
     <div id="links">
       <a href="http://sumodb.sumogames.de/gtb/GTBEntry.aspx" target="_blank">GTB Entry Form</a>
     </div>
-    <span id="newFeature">NEW FEATURE!!! Export your draft directly to the entry form <button type="button" id="openModal">Here's how</button></span>
+    <div id="changes">
+      Changes:
+      <ul>
+        <li>The double clicking on rikishi function has been fixed</li>
+        <li>The issue of the "export to entry form" function not working for some cases HASN'T been fixed. Sorry about that</li>
+        <li>Some dark mode color changes</li>
+      </ul>
+    </div>
+    <!--
+    <button type="button" id="copyDraft">Copy draft</button>
+    <input type="text" id="draftString" style="display: none;">
+    -->
+    <span id="newFeature">Export your draft directly to the entry form <button type="button" id="openModal">Here's how</button></span>
     <dialog id="insDialog">
       <button type="button" class="closeIns closeX">X</button>
-      <div class="insSteps"><u>Important: Please make sure to disable Enforce HTTPS and Block Third-Party Cookies options in your browser if you can.</u></div>
       <div class="insSteps">
         1. Create a bookmarklet with the code below<br>
         <input id="bookmarkletCode" type="text" disabled>
@@ -45,7 +56,6 @@
       <br>
       <button type="button" class="closeIns">Got it</button>
       <br>
-      <div class="insSteps"><b>If it's not working for you, stay tuned for the next GTB. It will be fixed once and for all!</b></div>
     </dialog>
     <ul>
       <li>Drag and drop rikishi from the old banzuke into the new banzuke</li>

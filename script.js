@@ -22,6 +22,26 @@ $("#bookmarkletCode").attr("value", "javascript:(function()%7Bif%20(!window.loca
 let redips = {},
   rd = REDIPS.drag;
 
+$("#copyDraft").on("click", function() {
+  var box = document.querySelector("#draftString");
+  var slots = document.querySelectorAll(".redips-only.b2");
+  var idsObj = {
+    draftIds: []
+  };
+
+  for (var i = 0; i < 54; i++) {
+    if (slots[i].children.length > 0)
+      idsObj.draftIds.push(parseInt(slots[i].children[0].children[0].href.split('=')[1]));
+    else
+      idsObj.draftIds.push(-1);
+    if (slots[i].dataset.r == "S2w" || slots[i].dataset.r == "K2w")
+      idsObj.draftIds.push(-1, -1);
+  }
+  box.value = JSON.stringify(idsObj);
+  box.select();
+  box.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(box.value);
+});
 $("#openModal").on("click", function() {
   document.getElementById("insDialog").showModal();
 });
@@ -375,8 +395,8 @@ redips.init = function () {
       currentCell = rd.findParent("TD", rd.obj),
       currentChgCell;
 
-    if (radioButton[0].checked) window.open(rikishiURL, "_blank").focus();
-    else if (radioButton[1].checked && currentCell.classList.contains("b2")) {
+    if (radioButton[1].checked) window.open(rikishiURL, "_blank").focus();
+    else if (radioButton[2].checked && currentCell.classList.contains("b2")) {
       rd.moveObject({
         obj: rd.obj,
         target: originCell,
@@ -873,19 +893,20 @@ else if (window.attachEvent) window.attachEvent("onload", redips.init);
 
 document.addEventListener('DOMContentLoaded', function() {
   
-  var basho = "202409"; // The date of the basho just ended
+  var basho = "202411"; // The date of the basho just ended
   
   const banzuke1Config = [
       { prefix: 'Y', range: [1] },
-      { prefix: 'O', range: [1] },
-      { prefix: 'S', range: [1, 2] },
+      { prefix: 'O', range: [1, 2] },
+      { prefix: 'S', range: [1] },
       { prefix: 'K', range: [1] },
       { prefix: 'M', range: Array.from({length: 17}, (_, i) => i + 1) },
       { divider: true },
       { prefix: 'J', range: Array.from({length: 14}, (_, i) => i + 1) },
       { divider: true },
       { prefix: 'Ms', range: Array.from({length: 60}, (_, i) => i + 1) },
-      { prefix: 'TD', range: [""] }
+      { divider: true },
+      { prefix: 'Sd18', range: [""] }
   ];
 
   const banzuke2Config = [
@@ -922,7 +943,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // ***************************************************************************
   if (window.localStorage.getItem("savedBanzuke") !== null) {
     var saveDate = Date.parse(window.localStorage.getItem("savedBanzukeTime")),
-      expireDate = new Date(Date.UTC(2024, 8, 22, 8, 50)); //UTC time
+      expireDate = new Date(Date.UTC(2024, 10, 24, 8, 40)); //UTC time
 
     if (saveDate < expireDate) window.localStorage.removeItem("savedBanzuke");
     else {

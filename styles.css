@@ -11,6 +11,31 @@ body {
   margin: 0;
 }
 
+.darkm #changes {
+  background: brown;
+}
+
+#changes {
+  border: 1px solid black;
+  width: fit-content;
+  padding: 5px 15px;
+  margin-bottom: 10px;
+  background: lightyellow;
+}
+
+.darkm .makushitaTable a {
+  color: #8dcfe8;
+}
+
+.darkm .makushitaTable th {
+  background: #4b4b4b;
+  color: white;
+}
+
+.darkm .makushitaTable td {
+  background: #4f4f6a;
+}
+
 .darkm #links {
   background: gray;
 }
@@ -124,9 +149,7 @@ div a {
 ul {
   font-size: 11pt;
   line-height: 25px;
-  margin-right: 4%;
   margin-top: 0;
-  float: left;
 }
 
 fieldset {
@@ -588,7 +611,7 @@ footer {
 }
 
 .darkm .b2 {
-  box-shadow: 3px 3px inset #ffffff17;
+  box-shadow: 3px 3px inset #00000026;
 }
 
 .darkm #banzuke1 .tableTitle {
@@ -610,8 +633,8 @@ footer {
 }
 
 .darkm .se > a {
-  color: #e6e6e6;
-  text-shadow: 1px 1px #0000005e;
+  color: #f0f0f0;
+  text-shadow: 0 0 2px #000000b5;
 }
 /*
 .darkm [id^="Ms"] > a {
@@ -620,6 +643,11 @@ footer {
 */
 .darkm .intai {
   background-color: #515151 !important;
+  text-shadow: none;
+}
+
+.darkm .intai a {
+  color: white;
 }
 
 .darkm [data-w="8"],
@@ -630,7 +658,7 @@ footer {
 .darkm [data-w="13"],
 .darkm [data-w="14"],
 .darkm [data-w="15"] {
-  background-color: #2e562e;
+  background-color: #205c20;
 }
 
 .darkm [data-w="0"],
@@ -641,7 +669,7 @@ footer {
 .darkm [data-w="5"],
 .darkm [data-w="6"],
 .darkm [data-w="7"] {
-  background-color: #6f3b39;
+  background-color: #86332f;
 }
 
 .darkm .cur span {
