@@ -205,7 +205,7 @@ function loadDraft() {
     }
     columnCheckFunction();
   }
-  setCookie();
+  //setCookie();
 }
 
 function deleteDraft() {
@@ -241,7 +241,7 @@ function saveBanzuke() {
     document.getElementById("tableLiner").innerHTML,
   );
   window.localStorage.setItem("savedBanzukeTime", date.toString());
-  setCookie();
+  //setCookie();
 }
 
 // *****************************************************************************
@@ -707,7 +707,7 @@ redips.resetBanzuke = function () {
       c6 = document.querySelectorAll(".nte");
 
     window.localStorage.removeItem("savedBanzuke");
-    setCookie();
+    //setCookie();
     document.getElementById("makRik").innerHTML = 0;
     for (var i = 1; i < 8; i++)
       window.localStorage.removeItem("colCheck" + String(i));
@@ -954,7 +954,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateInfoCells();
       }
     }
-    setCookie();
+    //setCookie();
   }
   if (window.localStorage.getItem("savedBanzuke") === null) {
     populateBanzukeTable('banzuke1Body', banzuke1Config, createRowBanzuke1);
@@ -962,7 +962,7 @@ document.addEventListener('DOMContentLoaded', function() {
     writeTableTitles(basho);
     addRikishi();
     addMakushitaTable();
-    setCookie();
+    //setCookie();
   }
 
   var radioButton = document.getElementsByClassName("checkbox"),
