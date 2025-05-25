@@ -893,7 +893,7 @@ else if (window.attachEvent) window.attachEvent("onload", redips.init);
 
 document.addEventListener('DOMContentLoaded', function() {
   
-  var basho = "202503"; // The date of the basho just ended
+  var basho = "202505"; // The date of the basho just ended
   
   const banzuke1Config = [
       { prefix: 'Y', range: [1] },
@@ -906,7 +906,7 @@ document.addEventListener('DOMContentLoaded', function() {
       { divider: true },
       { prefix: 'Ms', range: Array.from({length: 60}, (_, i) => i + 1) },
       { divider: true },
-      { prefix: 'Sd21', range: [""] }
+      { prefix: 'Sd16', range: [""] }
   ];
 
   const banzuke2Config = [
@@ -943,7 +943,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // ***************************************************************************
   if (window.localStorage.getItem("savedBanzuke") !== null) {
     var saveDate = Date.parse(window.localStorage.getItem("savedBanzukeTime")),
-      expireDate = new Date(Date.UTC(2025, 2, 23, 12, 50)); //UTC time
+      expireDate = new Date(Date.UTC(2025, 4, 25, 8, 56)); //UTC time
 
     if (saveDate < expireDate) window.localStorage.removeItem("savedBanzuke");
     else {
