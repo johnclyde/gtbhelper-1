@@ -1,7 +1,15 @@
 "use strict";
 
-import { exportTableToCSV } from './export.js';
-import { allRikishi, RetiredRikishi } from './rikishi.js';
+import { exportTableToCSV } from "./export.js";
+import { allRikishi, RetiredRikishi } from "./rikishi.js";
+import {
+  banzuke1Config,
+  banzuke2Config,
+  populateBanzukeTable,
+  createRowBanzuke1,
+  createRowBanzuke2,
+  writeTableTitles,
+} from "./banzuke-tables.js";
 
 /*
 var shikonaCells = document.getElementsByClassName("shikona");
@@ -15,25 +23,30 @@ var hrefHtmlUrl;
 
 if (window.location.href.startsWith("https://chiyo2suke"))
   hrefHtmlUrl = "https%3A%2F%2Fchiyo2suke.github.io%2Fgtbhelper";
-else
-  hrefHtmlUrl = "https%3A%2F%2Fgtbhelper.vercel.app";
-$("#bookmarkletCode").attr("value", "javascript:(function()%7Bif%20(!window.location.href.startsWith(%22http%3A%2F%2Fsumodb.sumogames.de%2Fgtb%2FGTBEntry.aspx%22))%20%7B%0A%20%20setTimeout(()%20%3D%3E%20%7B%0A%20%20%20%20alert(%22Please%20make%20sure%20you're%20on%20the%20GTB%20entry%20form%20page%20(and%20the%20URL%20starts%20with%20http%2C%20not%20https)%2C%20then%20try%20again.%22)%3B%0A%20%20%7D%2C%201000)%3B%0A%7D%0Aelse%20if%20(!document.querySelector(%22%23helperFrame%22))%20%7B%0A%20%20var%20frame%20%3D%20document.createElement(%22iframe%22)%3B%0A%20%20var%20helperUrl%20%3D%20%22" + hrefHtmlUrl + "%22%3B%0A%20%20var%20loadingBox%20%3D%20document.createElement(%22div%22)%3B%0A%0A%20%20loadingBox.innerText%20%3D%20%22Please%20wait...%22%3B%0A%20%20loadingBox.id%20%3D%20%22pleaseWaitBox%22%3B%0A%20%20loadingBox.style.cssText%20%3D%20%22border-radius%3A%2010px%3Bposition%3A%20fixed%3Btop%3A%2020px%3Bwidth%3A%20fit-content%3Bpadding%3A%2010px%2015px%3Bbackground%3A%20white%3Bleft%3A%2050%25%3Btransform%3A%20translateX(-50%25)%3Bborder%3A%201px%20outset%20gray%3Bbox-shadow%3A%205px%205px%203px%20%230006%3B%22%3B%0A%20%20document.body.appendChild(loadingBox)%3B%0A%20%20frame.setAttribute(%22src%22%2C%20helperUrl)%3B%0A%20%20frame.style.display%20%3D%20%22none%22%3B%0A%20%20frame.id%20%3D%20%22helperFrame%22%3B%0A%20%20frame.addEventListener(%22load%22%2C%20function()%20%7B%0A%20%20%20%20document.getElementById(%22pleaseWaitBox%22).remove()%3B%0A%20%20%20%20this.contentWindow.postMessage(%22Requesting%20data%22%2C%20'*')%3B%0A%20%20%7D)%3B%0A%20%20document.body.appendChild(frame)%3B%0A%20%20window.addEventListener(%22message%22%2C%20function(event)%20%7B%0A%20%20%20%20if%20(event.origin%20!%3D%20helperUrl)%20return%3B%0A%20%20%20%20if%20(event.data.message%20%3D%3D%20%22rikishi%20ids%22)%20%7B%0A%20%20%20%20%20%20var%20ids%20%3D%20event.data.ids%3B%0A%20%20%20%20%20%20var%20selects%20%3D%20document.getElementsByTagName(%22select%22)%3B%0A%20%20%20%20%20%20var%20rikishiCount%20%3D%200%3B%0A%20%20%20%20%20%20var%20doneBox%20%3D%20document.createElement(%22div%22)%3B%0A%0A%20%20%20%20%20%20for%20(var%20i%20%3D%200%3B%20i%20%3C%2058%3B%20i%2B%2B)%20%7B%0A%20%20%20%20%20%20%20%20selects%5Bi%5D.value%20%3D%20-1%3B%0A%20%20%20%20%20%20%20%20for%20(var%20j%20%3D%200%3B%20j%20%3C%20selects%5Bi%5D.options.length%3B%20j%2B%2B)%20%7B%0A%20%20%20%20%20%20%20%20%20%20if%20(selects%5Bi%5D.options%5Bj%5D.value%20%3D%3D%20ids%5Bi%5D)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20selects%5Bi%5D.value%20%3D%20ids%5Bi%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20(ids%5Bi%5D%20!%3D%20-1)%20rikishiCount%2B%2B%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20break%3B%0A%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20if%20(rikishiCount%20!%3D%2042)%0A%20%20%20%20%20%20%20%20this.alert(%22Notice%3A%20Your%20entry%20has%20%22%20%2B%20rikishiCount%20%2B%20%22%20rikishi.%22)%3B%0A%20%20%20%20%20%20doneBox.innerText%20%3D%20%22Done!%22%3B%0A%20%20%20%20%20%20doneBox.id%20%3D%20%22doneBox%22%3B%0A%20%20%20%20%20%20doneBox.style.cssText%20%3D%20%22border-radius%3A%2010px%3Bposition%3A%20fixed%3Btop%3A%2020px%3Bwidth%3A%20fit-content%3Bpadding%3A%2010px%2015px%3Bbackground%3A%20lightgreen%3Bleft%3A%2050%25%3Btransform%3A%20translateX(-50%25)%3Bborder%3A%201px%20outset%20gray%3Bbox-shadow%3A%205px%205px%203px%20%230006%3B%22%3B%0A%20%20%20%20%20%20document.body.appendChild(doneBox)%3B%0A%20%20%20%20%20%20setTimeout(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20this.document.getElementById(%22doneBox%22).remove()%3B%0A%20%20%20%20%20%20%7D%2C%201000)%3B%0A%20%20%20%20%7D%0A%20%20%7D)%3B%0A%7D%0Aelse%0A%20%20document.querySelector(%22%23helperFrame%22).contentWindow.postMessage(%22Requesting%20data%22%2C%20'*')%3B%7D)()%3B");
+else hrefHtmlUrl = "https%3A%2F%2Fgtbhelper.vercel.app";
+$("#bookmarkletCode").attr(
+  "value",
+  "javascript:(function()%7Bif%20(!window.location.href.startsWith(%22http%3A%2F%2Fsumodb.sumogames.de%2Fgtb%2FGTBEntry.aspx%22))%20%7B%0A%20%20setTimeout(()%20%3D%3E%20%7B%0A%20%20%20%20alert(%22Please%20make%20sure%20you're%20on%20the%20GTB%20entry%20form%20page%20(and%20the%20URL%20starts%20with%20http%2C%20not%20https)%2C%20then%20try%20again.%22)%3B%0A%20%20%7D%2C%201000)%3B%0A%7D%0Aelse%20if%20(!document.querySelector(%22%23helperFrame%22))%20%7B%0A%20%20var%20frame%20%3D%20document.createElement(%22iframe%22)%3B%0A%20%20var%20helperUrl%20%3D%20%22" +
+    hrefHtmlUrl +
+    "%22%3B%0A%20%20var%20loadingBox%20%3D%20document.createElement(%22div%22)%3B%0A%0A%20%20loadingBox.innerText%20%3D%20%22Please%20wait...%22%3B%0A%20%20loadingBox.id%20%3D%20%22pleaseWaitBox%22%3B%0A%20%20loadingBox.style.cssText%20%3D%20%22border-radius%3A%2010px%3Bposition%3A%20fixed%3Btop%3A%2020px%3Bwidth%3A%20fit-content%3Bpadding%3A%2010px%2015px%3Bbackground%3A%20white%3Bleft%3A%2050%25%3Btransform%3A%20translateX(-50%25)%3Bborder%3A%201px%20outset%20gray%3Bbox-shadow%3A%205px%205px%203px%20%230006%3B%22%3B%0A%20%20document.body.appendChild(loadingBox)%3B%0A%20%20frame.setAttribute(%22src%22%2C%20helperUrl)%3B%0A%20%20frame.style.display%20%3D%20%22none%22%3B%0A%20%20frame.id%20%3D%20%22helperFrame%22%3B%0A%20%20frame.addEventListener(%22load%22%2C%20function()%20%7B%0A%20%20%20%20document.getElementById(%22pleaseWaitBox%22).remove()%3B%0A%20%20%20%20this.contentWindow.postMessage(%22Requesting%20data%22%2C%20'*')%3B%0A%20%20%7D)%3B%0A%20%20document.body.appendChild(frame)%3B%0A%20%20window.addEventListener(%22message%22%2C%20function(event)%20%7B%0A%20%20%20%20if%20(event.origin%20!%3D%20helperUrl)%20return%3B%0A%20%20%20%20if%20(event.data.message%20%3D%3D%20%22rikishi%20ids%22)%20%7B%0A%20%20%20%20%20%20var%20ids%20%3D%20event.data.ids%3B%0A%20%20%20%20%20%20var%20selects%20%3D%20document.getElementsByTagName(%22select%22)%3B%0A%20%20%20%20%20%20var%20rikishiCount%20%3D%200%3B%0A%20%20%20%20%20%20var%20doneBox%20%3D%20document.createElement(%22div%22)%3B%0A%0A%20%20%20%20%20%20for%20(var%20i%20%3D%200%3B%20i%20%3C%2058%3B%20i%2B%2B)%20%7B%0A%20%20%20%20%20%20%20%20selects%5Bi%5D.value%20%3D%20-1%3B%0A%20%20%20%20%20%20%20%20for%20(var%20j%20%3D%200%3B%20j%20%3C%20selects%5Bi%5D.options.length%3B%20j%2B%2B)%20%7B%0A%20%20%20%20%20%20%20%20%20%20if%20(selects%5Bi%5D.options%5Bj%5D.value%20%3D%3D%20ids%5Bi%5D)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20selects%5Bi%5D.value%20%3D%20ids%5Bi%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20(ids%5Bi%5D%20!%3D%20-1)%20rikishiCount%2B%2B%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20break%3B%0A%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20if%20(rikishiCount%20!%3D%2042)%0A%20%20%20%20%20%20%20%20this.alert(%22Notice%3A%20Your%20entry%20has%20%22%20%2B%20rikishiCount%20%2B%20%22%20rikishi.%22)%3B%0A%20%20%20%20%20%20doneBox.innerText%20%3D%20%22Done!%22%3B%0A%20%20%20%20%20%20doneBox.id%20%3D%20%22doneBox%22%3B%0A%20%20%20%20%20%20doneBox.style.cssText%20%3D%20%22border-radius%3A%2010px%3Bposition%3A%20fixed%3Btop%3A%2020px%3Bwidth%3A%20fit-content%3Bpadding%3A%2010px%2015px%3Bbackground%3A%20lightgreen%3Bleft%3A%2050%25%3Btransform%3A%20translateX(-50%25)%3Bborder%3A%201px%20outset%20gray%3Bbox-shadow%3A%205px%205px%203px%20%230006%3B%22%3B%0A%20%20%20%20%20%20document.body.appendChild(doneBox)%3B%0A%20%20%20%20%20%20setTimeout(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20this.document.getElementById(%22doneBox%22).remove()%3B%0A%20%20%20%20%20%20%7D%2C%201000)%3B%0A%20%20%20%20%7D%0A%20%20%7D)%3B%0A%7D%0Aelse%0A%20%20document.querySelector(%22%23helperFrame%22).contentWindow.postMessage(%22Requesting%20data%22%2C%20'*')%3B%7D)()%3B",
+);
 
 let redips = {},
   rd = REDIPS.drag;
 
-$("#copyDraft").on("click", function() {
+$("#copyDraft").on("click", function () {
   var box = document.querySelector("#draftString");
   var slots = document.querySelectorAll(".redips-only.b2");
   var idsObj = {
-    draftIds: []
+    draftIds: [],
   };
 
   for (var i = 0; i < 54; i++) {
     if (slots[i].children.length > 0)
-      idsObj.draftIds.push(parseInt(slots[i].children[0].children[0].href.split('=')[1]));
-    else
-      idsObj.draftIds.push(-1);
+      idsObj.draftIds.push(
+        parseInt(slots[i].children[0].children[0].href.split("=")[1]),
+      );
+    else idsObj.draftIds.push(-1);
     if (slots[i].dataset.r == "S2w" || slots[i].dataset.r == "K2w")
       idsObj.draftIds.push(-1, -1);
   }
@@ -42,27 +55,30 @@ $("#copyDraft").on("click", function() {
   box.setSelectionRange(0, 99999);
   navigator.clipboard.writeText(box.value);
 });
-$("#openModal").on("click", function() {
+$("#openModal").on("click", function () {
   document.getElementById("insDialog").showModal();
 });
-$(".closeIns").on("click", function() {
+$(".closeIns").on("click", function () {
   document.getElementById("insDialog").close();
 });
-$("#copyCode").on("click", function() {
+$("#copyCode").on("click", function () {
   var textBox = document.querySelector("#bookmarkletCode");
-  
+
   textBox.select();
   textBox.setSelectionRange(0, 99999);
   navigator.clipboard.writeText(textBox.value);
-})
-addEventListener("message", async function(event) {
+});
+addEventListener("message", async function (event) {
   var sumodbUrl = "http://sumodb.sumogames.de";
 
   if (event.origin != sumodbUrl) return;
   if (event.data == "Requesting data") {
-    var ids = JSON.parse(this.document.cookie.split('=')[1]);
+    var ids = JSON.parse(this.document.cookie.split("=")[1]);
 
-    event.source.postMessage({message: "rikishi ids", ids: ids}, event.origin);
+    event.source.postMessage(
+      { message: "rikishi ids", ids: ids },
+      event.origin,
+    );
   }
 });
 
@@ -72,9 +88,8 @@ function setCookie() {
 
   for (var i = 0; i < 54; i++) {
     if (slots[i].children.length > 0)
-      ids.push(parseInt(slots[i].children[0].children[0].href.split('=')[1]));
-    else
-      ids.push(-1);
+      ids.push(parseInt(slots[i].children[0].children[0].href.split("=")[1]));
+    else ids.push(-1);
     if (slots[i].dataset.r == "S2w" || slots[i].dataset.r == "K2w")
       ids.push(-1, -1);
   }
@@ -84,7 +99,7 @@ function setCookie() {
 for (let button of document.getElementsByName("onDoubleClick")) {
   button.addEventListener("click", () => {
     window.localStorage.setItem("radioButton", button.value);
-  })
+  });
 }
 
 for (let button of document.getElementsByName("dropMode")) {
@@ -106,7 +121,7 @@ function addMakushitaTable() {
   table2.className = "makushitaTable";
   table3.className = "makushitaTable";
 
-  allRikishi.forEach(rikishi => {
+  allRikishi.forEach((rikishi) => {
     if (rikishi.rank.startsWith("Ms")) {
       const wins = parseInt(rikishi.winCount.split("-")[0], 10);
       groups[wins].push({
@@ -126,7 +141,7 @@ function addMakushitaTable() {
     headerRow.appendChild(header);
     table.children[0].appendChild(headerRow);
 
-    rows.forEach(rikishi => {
+    rows.forEach((rikishi) => {
       const rikishiRow = document.createElement("tr");
       const rikishiCell = document.createElement("td");
       const link = document.createElement("a");
@@ -262,7 +277,7 @@ redips.init = function () {
   if (radioDrop[2].checked) rd.dropMode = "single";
   else rd.dropMode = "multiple";
 
-  allRikishi.forEach(rikishi => {
+  allRikishi.forEach((rikishi) => {
     if (rikishi.rank !== "") {
       rd.only.div[rikishi.rank] = rikishi.rank;
     }
@@ -562,11 +577,13 @@ function columnCheckFunction() {
       var column = button.value;
       var colCell = document.getElementsByClassName(column);
       var colCheck = document.querySelectorAll(".columnCheckbox");
-  
+
       if (button.checked) {
-        for (var i = 0; i < colCell.length; i++) colCell[i].classList.remove("hid");
+        for (var i = 0; i < colCell.length; i++)
+          colCell[i].classList.remove("hid");
       } else {
-        for (var i = 0; i < colCell.length; i++) colCell[i].classList.add("hid");
+        for (var i = 0; i < colCell.length; i++)
+          colCell[i].classList.add("hid");
       }
       for (var i = 1; i < 8; i++) {
         window.localStorage.setItem(
@@ -758,7 +775,8 @@ redips.arrange = function () {
     for (let rikishi of allRikishi) {
       const rikishiElement = document.getElementById(rikishi.rank);
 
-      if (rikishi.rank.startsWith("Ms") && parseInt(rikishi.rank.slice(2)) > 15) break;
+      if (rikishi.rank.startsWith("Ms") && parseInt(rikishi.rank.slice(2)) > 15)
+        break;
       if (rikishi instanceof RetiredRikishi) continue;
 
       if (!rikishiElement.parentNode.classList.contains("b2")) {
@@ -790,7 +808,7 @@ redips.arrange = function () {
         obj: rikishiElement,
         target: document.querySelector(`[data-r="${rikishi.rank}"]`),
       });
-    };
+    }
     updateInfoCells();
     saveBanzuke();
   }
@@ -891,34 +909,8 @@ if (window.addEventListener)
   window.addEventListener("load", redips.init, false);
 else if (window.attachEvent) window.attachEvent("onload", redips.init);
 
-document.addEventListener('DOMContentLoaded', function() {
-  
+document.addEventListener("DOMContentLoaded", function () {
   var basho = "202507"; // The date of the basho just ended
-  
-  const banzuke1Config = [
-      { prefix: 'Y', range: [1] },
-      { prefix: 'O', range: [1] },
-      { prefix: 'S', range: [1, 2] },
-      { prefix: 'K', range: [1] },
-      { prefix: 'M', range: Array.from({length: 17}, (_, i) => i + 1) },
-      { divider: true },
-      { prefix: 'J', range: Array.from({length: 14}, (_, i) => i + 1) },
-      { divider: true },
-      { prefix: 'Ms', range: Array.from({length: 60}, (_, i) => i + 1) },
-      { prefix: 'TD', range: [""] }
-  ];
-
-  const banzuke2Config = [
-      { prefix: 'Y', range: [1, 2] },
-      { prefix: 'O', range: [1, 2, 3] },
-      { prefix: 'S', range: [1, 2] },
-      { prefix: 'K', range: [1, 2] },
-      { prefix: 'M', range: Array.from({length: 18}, (_, i) => i + 1) },
-      { divider: 'Juryo Guess - <span id="juRik">0</span>/28' },
-      { prefix: 'J', range: Array.from({length: 14}, (_, i) => i + 1) },
-      { divider: 'Makushita Joi Guess - <span id="msRik">0</span>/30' },
-      { prefix: 'Ms', range: Array.from({length: 15}, (_, i) => i + 1) }
-  ];
 
   // This must be a hyperlink
   $("#exportToCsv1").on("click", function (event) {
@@ -956,8 +948,8 @@ document.addEventListener('DOMContentLoaded', function() {
     //setCookie();
   }
   if (window.localStorage.getItem("savedBanzuke") === null) {
-    populateBanzukeTable('banzuke1Body', banzuke1Config, createRowBanzuke1);
-    populateBanzukeTable('banzuke2Body', banzuke2Config, createRowBanzuke2);
+    populateBanzukeTable("banzuke1Body", banzuke1Config, createRowBanzuke1);
+    populateBanzukeTable("banzuke2Body", banzuke2Config, createRowBanzuke2);
     writeTableTitles(basho);
     addRikishi();
     addMakushitaTable();
@@ -1029,10 +1021,16 @@ document.addEventListener('DOMContentLoaded', function() {
         draftsJSON[i].name +
         "</b></td><td>" +
         draftsJSON[i].date +
-        '</td><td><button>❌</button> <button>Load</button></td>';
+        "</td><td><button>❌</button> <button>Load</button></td>";
       draftsTable.children[0].appendChild(draftRow);
-      draftsTable.children[0].lastChild.children[2].children[0].addEventListener("click", deleteDraft);
-      draftsTable.children[0].lastChild.children[2].children[1].addEventListener("click", loadDraft);
+      draftsTable.children[0].lastChild.children[2].children[0].addEventListener(
+        "click",
+        deleteDraft,
+      );
+      draftsTable.children[0].lastChild.children[2].children[1].addEventListener(
+        "click",
+        loadDraft,
+      );
     }
   }
   if (window.localStorage.getItem("colCheck1") === null) {
@@ -1087,10 +1085,16 @@ document.addEventListener('DOMContentLoaded', function() {
           draftName +
           "</b></td><td>" +
           currentDate +
-          '</td><td><button>❌</button> <button>Load</button></td>';
+          "</td><td><button>❌</button> <button>Load</button></td>";
         draftsTable.children[0].appendChild(draftRow);
-        draftsTable.children[0].lastChild.children[2].children[0].addEventListener("click", deleteDraft);
-        draftsTable.children[0].lastChild.children[2].children[1].addEventListener("click", loadDraft);
+        draftsTable.children[0].lastChild.children[2].children[0].addEventListener(
+          "click",
+          deleteDraft,
+        );
+        draftsTable.children[0].lastChild.children[2].children[1].addEventListener(
+          "click",
+          loadDraft,
+        );
         document.getElementById("draftName").value = "";
       }
       saveDialog.close();
@@ -1110,8 +1114,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-  document.getElementById("resetBanzuke").addEventListener("click", redips.resetBanzuke);
-  document.getElementById("autoArrange").addEventListener("click", redips.arrange);
+  document
+    .getElementById("resetBanzuke")
+    .addEventListener("click", redips.resetBanzuke);
+  document
+    .getElementById("autoArrange")
+    .addEventListener("click", redips.arrange);
   columnCheckFunction();
 
   function darkmode() {
@@ -1126,129 +1134,24 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.setItem("mode", "light"); //store a name & value to know that dark mode is off or light mode is on
   }
 
-  function writeTableTitles(endedBashoDate) {
-    var bashoYear = parseInt(endedBashoDate.substring(0, 4)),
-      bashoMonth = parseInt(endedBashoDate.slice(-2)),
-      tableTitle = document.getElementsByClassName("tableTitle");
-
-    const bashoMonthLookup = {
-        1: "Hatsu",
-        3: "Haru",
-        5: "Natsu",
-        7: "Nagoya",
-        9: "Aki",
-        11: "Kyushu",
-      },
-      getBashoName = (bMonth) => bashoMonthLookup[bMonth];
-
-    tableTitle[0].innerHTML =
-      getBashoName(bashoMonth) +
-      " " +
-      bashoYear +
-      tableTitle[0].innerHTML +
-      " Result";
-    if (bashoMonth > 9) {
-      bashoYear++;
-      bashoMonth = -1;
-    }
-    tableTitle[1].innerHTML =
-      getBashoName(bashoMonth + 2) +
-      " " +
-      bashoYear +
-      " Makuuchi Guess - " +
-      tableTitle[1].innerHTML;
-      tableTitle[0].colSpan = '9';
-      tableTitle[1].colSpan = "11";
-  }
-
   function addRikishi() {
     const table1 = document.getElementById("banzuke1"),
       cells = table1.querySelectorAll(".redips-only");
 
-    cells.forEach(cell => {
-      allRikishi.forEach(rikishi => {
+    cells.forEach((cell) => {
+      allRikishi.forEach((rikishi) => {
         if (cell.classList.contains(rikishi.rank)) {
           let card = rikishi.createCard(basho);
 
           cell.appendChild(card);
           cell.classList.add("initCell");
 
-          let resCell = cell.previousElementSibling.classList.contains("rs1") ? cell.previousElementSibling : cell.nextElementSibling;
+          let resCell = cell.previousElementSibling.classList.contains("rs1")
+            ? cell.previousElementSibling
+            : cell.nextElementSibling;
           resCell.innerHTML = rikishi.getRecordLink(basho);
         }
       });
     });
   }
 });
-
-function populateBanzukeTable(tableId, config, createRow) {
-    const tableBody = document.getElementById(tableId);
-    config.forEach(item => {
-        if (item.divider) {
-            const dividerRow = createDividerRow(item.divider);
-            tableBody.appendChild(dividerRow);
-        } else {
-            item.range.forEach(num => {
-                const rank = item.prefix + num;
-                const row = createRow(rank);
-                tableBody.appendChild(row);
-            });
-        }
-    });
-}
-
-function createRowBanzuke1(rank) {
-    const row = document.createElement('tr');
-    if (rank == "TD") {
-      row.innerHTML = `
-        <td class="rs1"></td>
-        <td class="redips-only Ms60${rank}"></td>
-        <td class="new hid"></td>
-        <td class="ch1 hid"></td>
-        <th>${rank}</th>`;
-    }
-    else {
-      row.innerHTML = `
-        <td class="rs1"></td>
-        <td class="redips-only ${rank}e"></td>
-        <td class="new hid"></td>
-        <td class="ch1 hid"></td>
-        <th>${rank}</th>
-        <td class="redips-only ${rank}w"></td>
-        <td class="rs1"></td>
-        <td class="new hid"></td>
-        <td class="ch1 hid"></td>`;
-    }
-    if (['Y', 'O', 'S', 'K'].includes(rank.charAt(0))) 
-      row.className = rank.charAt(0).toLowerCase() + "Row";
-    return row;
-}
-
-function createRowBanzuke2(rank) {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td class="nte hid"><div></div></td>
-        <td class="cur"></td>
-        <td data-r="${rank}e" class="redips-only b2"></td>
-        <td class="rs2"></td>
-        <td class="ch2"></td>
-        <th>${rank}</th>
-        <td class="cur"></td>
-        <td data-r="${rank}w" class="redips-only b2"></td>
-        <td class="rs2"></td>
-        <td class="ch2"></td>
-        <td class="nte hid"><div></div></td>`;
-    if (['Y', 'O', 'S', 'K'].includes(rank.charAt(0))) 
-      row.className = rank.charAt(0).toLowerCase() + "Row";
-    return row;
-}
-
-function createDividerRow(title) {
-    const row = document.createElement('tr');
-    if (typeof title === "string") {
-        row.innerHTML = `<th colspan="11" class="tableTitle">${title}</th>`;
-    } else {
-        row.classList.add('divider');
-    }
-    return row;
-}
